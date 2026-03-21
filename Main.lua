@@ -1,8 +1,8 @@
 --[[ 
-    PREMIUM MODERN SILVER UI (V12) - WITH OPTIONAL KEY SYSTEM & ANIMATED TITLE
+    PREMIUM MODERN SILVER UI (V11) - WITH KEY SYSTEM & ANIMATED TITLE
     - Style: Compact & Refined
-    - Features: URL Loader, Animated Title (letter by letter), Optional Key System, Get Key Button, Transparency
-    - Usage: loadstring(game:HttpGet("YOUR_URL_HERE"))()
+    - Features: URL Loader, Animated Title (letter by letter), Key System
+    - Usage: loadstring(game:HttpGet("https://raw.githubusercontent.com/BaiSoku1/Fluent/refs/heads/main/Main.lua"))()
 ]]
 
 local Library = {}
@@ -240,8 +240,8 @@ local function ShowKeySystem(config, callback)
     
     -- Submit button
     local SubmitBtn = Create("TextButton", {
-        Size = UDim2.new(0.4, 0, 0, 40),
-        Position = UDim2.new(0.05, 0, 0, 165),
+        Size = UDim2.new(0.85, 0, 0, 40),
+        Position = UDim2.new(0.5, -170, 0, 165),
         BackgroundColor3 = Color3.fromRGB(30, 30, 30),
         Text = "VERIFY KEY",
         Font = Enum.Font.GothamBold,
@@ -250,19 +250,6 @@ local function ShowKeySystem(config, callback)
         Parent = KeyWindow
     }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
     ApplyPremiumBorder(SubmitBtn, 1.5)
-    
-    -- Get Key button
-    local GetKeyBtn = Create("TextButton", {
-        Size = UDim2.new(0.4, 0, 0, 40),
-        Position = UDim2.new(0.55, 0, 0, 165),
-        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
-        Text = "GET KEY",
-        Font = Enum.Font.GothamBold,
-        TextSize = 12,
-        TextColor3 = Color3.fromRGB(220, 220, 220),
-        Parent = KeyWindow
-    }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
-    ApplyPremiumBorder(GetKeyBtn, 1.5)
     
     -- Status text
     local StatusText = Create("TextLabel", {
@@ -276,49 +263,42 @@ local function ShowKeySystem(config, callback)
         Parent = KeyWindow
     })
     
-    -- Get key URL function
-    local function OpenGetKeyURL()
-        if config.GetKeyURL then
-            local Animation = loadstring(game:HttpGet("https://raw.githubusercontent.com/Vraigos/Fluent-Modded/refs/heads/master/src/Components/AnimateGui.lua"))()
-            if Animation and Animation.AnimateGui then
-                Animation.AnimateGui(config.GetKeyURL)
-            else
-                Library:Notify("Key Link", "Link copied to clipboard!", 3)
-                setclipboard(config.GetKeyURL)
-            end
-        else
-            Library:Notify("Error", "No key link provided!", 3)
-        end
-    end
-    
     -- Verify function
     local function VerifyKey(key)
         StatusText.Text = "Verifying key..."
         StatusText.TextColor3 = Color3.fromRGB(255, 200, 100)
         
+        -- Check through APIs
         local verified = false
+        local apiResults = {}
         
         for _, api in ipairs(config.API or {}) do
             if api.Type == "platoboost" and api.ServiceId and api.Secret then
+                -- PlatoBoost verification simulation
                 local success, response = pcall(function()
                     return HttpService:JSONDecode(game:HttpGet("https://api.platoboost.com/v1/verify/" .. api.ServiceId .. "/" .. key .. "?secret=" .. api.Secret))
                 end)
                 if success and response and response.valid then
                     verified = true
+                    apiResults.platoboost = true
                 end
             elseif api.Type == "pandadevelopment" and api.ServiceId then
+                -- PandaDevelopment verification simulation
                 local success, response = pcall(function()
                     return HttpService:JSONDecode(game:HttpGet("https://api.pandadevelopment.net/verify/" .. api.ServiceId .. "/" .. key))
                 end)
                 if success and response and response.success then
                     verified = true
+                    apiResults.pandadevelopment = true
                 end
             elseif api.Type == "luarmor" and api.ScriptId then
+                -- LuaArmor verification simulation
                 local success, response = pcall(function()
                     return HttpService:JSONDecode(game:HttpGet("https://api.luarmor.net/v3/scripts/" .. api.ScriptId .. "/verify?key=" .. key))
                 end)
                 if success and response and response.valid then
                     verified = true
+                    apiResults.luarmor = true
                 end
             end
         end
@@ -342,10 +322,6 @@ local function ShowKeySystem(config, callback)
             StatusText.Text = "Please enter a key!"
             StatusText.TextColor3 = Color3.fromRGB(255, 100, 100)
         end
-    end)
-    
-    GetKeyBtn.MouseButton1Click:Connect(function()
-        OpenGetKeyURL()
     end)
     
     -- Enter key support
@@ -385,24 +361,15 @@ function Library:CreateWindow(config)
     local Player = Players.LocalPlayer
     
     local titleText = config.Title or "PREMIUM UI"
-    local isTransparent = config.Transparent or false
     local windowCreated = false
     local screenGui = nil
     local MainFrame = nil
     local OpenButton = nil
     local titleContainer = nil
     local letterLabels = nil
-    local Sidebar = nil
-    local Container = nil
     
-    -- Background color based on transparency setting
-    local bgColor = isTransparent and Color3.fromRGB(8, 8, 8) or Color3.fromRGB(8, 8, 8)
-    local sideBgColor = isTransparent and Color3.fromRGB(12, 12, 12) or Color3.fromRGB(12, 12, 12)
-    local bgTransparency = isTransparent and 0.15 or 0
-    local sideTransparency = isTransparent and 0.1 or 0
-    
-    -- Check if key system is enabled (only if config.KeySystem exists and has API)
-    if config.KeySystem and config.KeySystem.API and #config.KeySystem.API > 0 then
+    -- Check if key system is enabled
+    if config.KeySystem and config.KeySystem.API then
         ShowKeySystem(config.KeySystem, function(verified)
             if verified then
                 CreateMainUI()
@@ -411,7 +378,6 @@ function Library:CreateWindow(config)
             end
         end)
     else
-        -- No key system, langsung buat UI
         CreateMainUI()
     end
     
@@ -436,14 +402,13 @@ function Library:CreateWindow(config)
     
         MainFrame = Create("Frame", {
             Name = "MainFrame",
-            Size = UDim2.fromOffset(450, 400),
+            Size = UDim2.fromOffset(420, 280),
             Position = UDim2.fromScale(0.5, 0.5),
             AnchorPoint = Vector2.new(0.5, 0.5),
-            BackgroundColor3 = bgColor,
-            BackgroundTransparency = bgTransparency,
+            BackgroundColor3 = Color3.fromRGB(8, 8, 8),
             Visible = true,
             Parent = screenGui
-        }, {Create("UICorner", {CornerRadius = UDim.new(0, 12)})})
+        }, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
         ApplyPremiumBorder(MainFrame, 2.8)
     
         -- Draggable
@@ -472,7 +437,7 @@ function Library:CreateWindow(config)
         OpenButton.MouseButton1Click:Connect(function()
             MainFrame.Visible = not MainFrame.Visible
             if MainFrame.Visible then 
-                MainFrame:TweenSize(UDim2.fromOffset(450, 400), "Out", "Back", 0.4, true)
+                MainFrame:TweenSize(UDim2.fromOffset(420, 280), "Out", "Back", 0.4, true)
                 -- Re-animate title when window opens
                 if titleContainer and letterLabels then
                     for _, letterLabel in ipairs(letterLabels) do
@@ -488,34 +453,32 @@ function Library:CreateWindow(config)
             end
         end)
     
-        -- Top Bar
         local TopBar = Create("Frame", {
-            Size = UDim2.new(1, 0, 0, 50),
+            Size = UDim2.new(1, 0, 0, 35),
             BackgroundTransparency = 1,
             Parent = MainFrame
         })
         
-        -- Create animated title
-        titleContainer, letterLabels = CreateAnimatedTitle(TopBar, titleText, UDim2.fromOffset(15, 12), UDim2.new(1, -80, 1, 0), 16)
+        -- Create animated title with letter-by-letter display
+        titleContainer, letterLabels = CreateAnimatedTitle(TopBar, titleText, UDim2.fromOffset(12, 0), UDim2.new(1, -60, 1, 0), 14)
         
-        -- Add author text
+        -- Add author text if provided
         if config.Author then
             Create("TextLabel", {
                 Text = config.Author,
                 Font = Enum.Font.Gotham,
-                TextSize = 9,
+                TextSize = 8,
                 TextColor3 = Color3.fromRGB(150, 150, 150),
                 BackgroundTransparency = 1,
-                Position = UDim2.new(1, -100, 0, 32),
-                Size = UDim2.new(0, 100, 0, 12),
+                Position = UDim2.new(1, -100, 0, 25),
+                Size = UDim2.new(0, 100, 0, 10),
                 Parent = TopBar
             })
         end
         
-        -- Close button
         local CloseBtn = Create("ImageButton", {
-            Size = UDim2.fromOffset(26, 26),
-            Position = UDim2.new(1, -40, 0, 12),
+            Size = UDim2.fromOffset(20, 20),
+            Position = UDim2.new(1, -30, 0, 8),
             BackgroundTransparency = 1,
             Image = "rbxassetid://74666642456643",
             ImageColor3 = Color3.fromRGB(200, 200, 200),
@@ -526,177 +489,118 @@ function Library:CreateWindow(config)
                 MainFrame.Visible = false 
             end) 
         end)
-        
-        -- Separator line
-        Create("Frame", {
-            Size = UDim2.new(1, -20, 0, 1),
-            Position = UDim2.new(0, 10, 0, 49),
-            BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-            BorderSizePixel = 0,
-            Parent = MainFrame
-        })
     
-        -- Sidebar
-        Sidebar = Create("Frame", {
-            Size = UDim2.new(0, 130, 1, -65),
-            Position = UDim2.fromOffset(10, 60),
-            BackgroundColor3 = sideBgColor,
-            BackgroundTransparency = sideTransparency,
+        -- Sidebar with Padding
+        local Sidebar = Create("Frame", {
+            Size = UDim2.new(0, 110, 1, -55),
+            Position = UDim2.fromOffset(10, 45),
+            BackgroundColor3 = Color3.fromRGB(12, 12, 12),
             Parent = MainFrame
         }, {
-            Create("UICorner", {CornerRadius = UDim.new(0, 10)}),
-            Create("UIPadding", {PaddingTop = UDim.new(0, 12), PaddingLeft = UDim.new(0, 8), PaddingRight = UDim.new(0, 8)})
+            Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
+            Create("UIListLayout", {Padding = UDim.new(0, 6), HorizontalAlignment = "Center"}),
+            Create("UIPadding", {PaddingTop = UDim.new(0, 8)})
         })
         ApplyPremiumBorder(Sidebar, 1.2)
-        
-        -- Sidebar buttons layout
-        local SidebarLayout = Create("UIListLayout", {
-            Padding = UDim.new(0, 8),
-            HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            Parent = Sidebar
-        })
     
-        -- Container for pages
-        Container = Create("Frame", {
-            Size = UDim2.new(1, -155, 1, -70),
-            Position = UDim2.fromOffset(150, 60),
+        -- Container with Padding
+        local Container = Create("Frame", {
+            Size = UDim2.new(1, -140, 1, -55),
+            Position = UDim2.fromOffset(130, 45),
             BackgroundTransparency = 1,
             Parent = MainFrame
         })
     
         local Window = {}
         local firstTab = true
-        local tabs = {}
     
         function Window:CreateTab(name)
-            -- Create tab button
             local TabBtn = Create("TextButton", {
-                Size = UDim2.new(0.95, 0, 0, 38),
-                BackgroundColor3 = firstTab and Color3.fromRGB(220, 220, 220) or Color3.fromRGB(25, 25, 25),
+                Size = UDim2.new(0.85, 0, 0, 30),
+                BackgroundColor3 = firstTab and Color3.fromRGB(220, 220, 220) or Color3.fromRGB(20, 20, 20),
                 Text = name,
                 TextColor3 = firstTab and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(200, 200, 200),
                 Font = Enum.Font.GothamBold,
-                TextSize = 13,
-                BackgroundTransparency = 0,
+                TextSize = 11,
                 Parent = Sidebar
-            }, {Create("UICorner", {CornerRadius = UDim.new(0, 8)})})
+            }, {Create("UICorner", {CornerRadius = UDim.new(0, 5)})})
             
-            -- Create page
             local Page = Create("ScrollingFrame", {
                 Size = UDim2.fromScale(1, 1),
                 BackgroundTransparency = 1,
                 Visible = firstTab,
-                ScrollBarThickness = 4,
-                ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100),
-                CanvasSize = UDim2.new(0, 0, 0, 0),
+                ScrollBarThickness = 0,
                 Parent = Container
             }, {
-                Create("UIListLayout", {
-                    Padding = UDim.new(0, 12),
-                    HorizontalAlignment = Enum.HorizontalAlignment.Center,
-                    SortOrder = Enum.SortOrder.LayoutOrder
-                }),
-                Create("UIPadding", {PaddingTop = UDim.new(0, 8), PaddingBottom = UDim.new(0, 8)})
+                Create("UIListLayout", {Padding = UDim.new(0, 8), HorizontalAlignment = "Center"}),
+                Create("UIPadding", {PaddingTop = UDim.new(0, 2)})
             })
-            
-            -- Store page reference
-            tabs[name] = Page
-            
-            -- Button click handler
+    
             TabBtn.MouseButton1Click:Connect(function()
-                -- Update all sidebar buttons
                 for _, v in pairs(Sidebar:GetChildren()) do 
                     if v:IsA("TextButton") then 
-                        TweenService:Create(v, TweenInfo.new(0.2), {
-                            BackgroundColor3 = Color3.fromRGB(25, 25, 25), 
-                            TextColor3 = Color3.fromRGB(200, 200, 200)
-                        }):Play() 
+                        TweenService:Create(v, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(20, 20, 20), TextColor3 = Color3.fromRGB(200, 200, 200)}):Play() 
                     end 
                 end
-                -- Hide all pages
-                for _, page in pairs(tabs) do
-                    page.Visible = false
+                for _, v in pairs(Container:GetChildren()) do 
+                    v.Visible = false 
                 end
-                -- Show current page
+                TweenService:Create(TabBtn, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(220, 220, 220), TextColor3 = Color3.fromRGB(20, 20, 20)}):Play()
                 Page.Visible = true
-                -- Update button style
-                TweenService:Create(TabBtn, TweenInfo.new(0.2), {
-                    BackgroundColor3 = Color3.fromRGB(220, 220, 220), 
-                    TextColor3 = Color3.fromRGB(20, 20, 20)
-                }):Play()
             end)
     
             firstTab = false
-            
             local Tab = {}
-            
-            -- Update canvas size function
-            local function UpdateCanvasSize()
-                task.wait(0.05)
-                local layout = Page:FindFirstChildOfClass("UIListLayout")
-                if layout then
-                    local totalHeight = 0
-                    for _, child in pairs(Page:GetChildren()) do
-                        if child:IsA("TextButton") or child:IsA("Frame") then
-                            totalHeight = totalHeight + child.AbsoluteSize.Y + 12
-                        end
-                    end
-                    Page.CanvasSize = UDim2.new(0, 0, 0, totalHeight + 20)
-                end
-            end
     
             function Tab:CreateButton(text, callback)
                 local Btn = Create("TextButton", {
-                    Size = UDim2.new(0.96, 0, 0, 42),
-                    BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+                    Size = UDim2.new(0.96, 0, 0, 35),
+                    BackgroundColor3 = Color3.fromRGB(18, 18, 18),
                     Text = text,
                     TextColor3 = Color3.fromRGB(230, 230, 230),
                     Font = Enum.Font.GothamMedium,
-                    TextSize = 13,
+                    TextSize = 11,
                     Parent = Page
-                }, {Create("UICorner", {CornerRadius = UDim.new(0, 8)})})
+                }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
                 ApplyPremiumBorder(Btn, 1)
                 Btn.MouseButton1Click:Connect(function() 
                     if callback then callback() end 
-                    Btn:TweenSize(UDim2.new(0.94, 0, 0, 40), "Out", "Quad", 0.08, true, function() 
-                        Btn:TweenSize(UDim2.new(0.96, 0, 0, 42), "Out", "Quad", 0.08, true) 
+                    Btn:TweenSize(UDim2.new(0.9, 0, 0, 32), "Out", "Quad", 0.1, true, function() 
+                        Btn:TweenSize(UDim2.new(0.96, 0, 0, 35), "Out", "Quad", 0.1, true) 
                     end) 
                 end)
-                UpdateCanvasSize()
-                return Btn
             end
     
             function Tab:CreateToggle(text, callback)
                 local TglFrame = Create("Frame", {
-                    Size = UDim2.new(0.96, 0, 0, 48),
-                    BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+                    Size = UDim2.new(0.96, 0, 0, 35),
+                    BackgroundColor3 = Color3.fromRGB(18, 18, 18),
                     Parent = Page
-                }, {Create("UICorner", {CornerRadius = UDim.new(0, 8)})})
+                }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
                 ApplyPremiumBorder(TglFrame, 1)
                 
                 Create("TextLabel", {
                     Text = text,
                     Font = Enum.Font.GothamMedium,
-                    TextSize = 13,
+                    TextSize = 11,
                     TextColor3 = Color3.fromRGB(200, 200, 200),
                     TextXAlignment = "Left",
                     BackgroundTransparency = 1,
-                    Position = UDim2.fromOffset(12, 0),
-                    Size = UDim2.new(1, -80, 1, 0),
+                    Position = UDim2.fromOffset(10, 0),
+                    Size = UDim2.new(1, -60, 1, 0),
                     Parent = TglFrame
                 })
                 
                 local TglBtn = Create("TextButton", {
-                    Size = UDim2.fromOffset(48, 24),
-                    Position = UDim2.new(1, -60, 0.5, -12),
-                    BackgroundColor3 = Color3.fromRGB(40, 40, 40),
+                    Size = UDim2.fromOffset(36, 18),
+                    Position = UDim2.new(1, -46, 0.5, -9),
+                    BackgroundColor3 = Color3.fromRGB(35, 35, 35),
                     Text = "",
                     Parent = TglFrame
                 }, {Create("UICorner", {CornerRadius = UDim.new(1, 0)})})
                 
                 local Circle = Create("Frame", {
-                    Size = UDim2.fromOffset(20, 20),
+                    Size = UDim2.fromOffset(14, 14),
                     Position = UDim2.fromOffset(2, 2),
                     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                     Parent = TglBtn
@@ -705,50 +609,49 @@ function Library:CreateWindow(config)
                 local toggled = false
                 TglBtn.MouseButton1Click:Connect(function() 
                     toggled = not toggled
-                    local targetPos = toggled and UDim2.fromOffset(26, 2) or UDim2.fromOffset(2, 2)
-                    local targetColor = toggled and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(40, 40, 40)
-                    TweenService:Create(Circle, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = targetPos}):Play()
-                    TweenService:Create(TglBtn, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
+                    local targetPos = toggled and UDim2.fromOffset(20, 2) or UDim2.fromOffset(2, 2)
+                    local targetColor = toggled and Color3.fromRGB(200, 200, 200) or Color3.fromRGB(35, 35, 35)
+                    TweenService:Create(Circle, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = targetPos}):Play()
+                    TweenService:Create(TglBtn, TweenInfo.new(0.3), {BackgroundColor3 = targetColor}):Play()
                     if callback then callback(toggled) end 
                 end)
-                UpdateCanvasSize()
             end
     
             function Tab:CreateSlider(text, min, max, default, callback)
                 local SliderFrame = Create("Frame", {
-                    Size = UDim2.new(0.96, 0, 0, 75),
-                    BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+                    Size = UDim2.new(0.96, 0, 0, 55),
+                    BackgroundColor3 = Color3.fromRGB(18, 18, 18),
                     Parent = Page
-                }, {Create("UICorner", {CornerRadius = UDim.new(0, 8)})})
+                }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
                 ApplyPremiumBorder(SliderFrame, 1)
                 
                 Create("TextLabel", {
                     Text = text,
                     Font = Enum.Font.GothamMedium,
-                    TextSize = 13,
+                    TextSize = 11,
                     TextColor3 = Color3.fromRGB(200, 200, 200),
                     TextXAlignment = "Left",
                     BackgroundTransparency = 1,
-                    Position = UDim2.fromOffset(12, 10),
-                    Size = UDim2.new(1, -20, 0, 22),
+                    Position = UDim2.fromOffset(10, 5),
+                    Size = UDim2.new(1, -20, 0, 15),
                     Parent = SliderFrame
                 })
                 
                 local ValueLabel = Create("TextLabel", {
                     Text = tostring(default),
                     Font = Enum.Font.GothamBold,
-                    TextSize = 13,
+                    TextSize = 10,
                     TextColor3 = Color3.fromRGB(220, 220, 220),
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(1, -55, 0, 10),
-                    Size = UDim2.new(0, 50, 0, 22),
+                    Position = UDim2.new(1, -40, 0, 5),
+                    Size = UDim2.new(0, 35, 0, 15),
                     Parent = SliderFrame
                 })
                 
                 local SliderBar = Create("Frame", {
-                    Size = UDim2.new(0.9, 0, 0, 5),
+                    Size = UDim2.new(0.9, 0, 0, 4),
                     Position = UDim2.new(0.05, 0, 0.7, 0),
-                    BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+                    BackgroundColor3 = Color3.fromRGB(40, 40, 40),
                     Parent = SliderFrame
                 }, {Create("UICorner", {CornerRadius = UDim.new(1, 0)})})
                 
@@ -787,7 +690,6 @@ function Library:CreateWindow(config)
                         dragging = false
                     end
                 end)
-                UpdateCanvasSize()
             end
     
             return Tab
