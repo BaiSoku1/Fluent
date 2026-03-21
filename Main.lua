@@ -1,8 +1,8 @@
 --[[ 
-    PREMIUM MODERN SILVER UI (V11) - COMPLETE KEY SYSTEM
+    PREMIUM MODERN SILVER UI (V11) - FINAL COMPLETE
     - Style: Compact & Refined
     - Features: URL Loader, Animated Title (letter by letter), Complete Key System
-    - Key Methods: Local Keys, URL Get Key, PlatoBoost, PandaDevelopment, LuaArmor
+    - Key Methods: Local Keys, URL Get Key (copy to clipboard), PlatoBoost, PandaDevelopment, LuaArmor
     - Usage: loadstring(game:HttpGet("YOUR_URL_HERE"))()
 ]]
 
@@ -68,7 +68,6 @@ function Library:Notify(title, content, duration)
     end)
 end
 
--- Function to create animated title with individual letters
 local function CreateAnimatedTitle(parent, titleText, position, size, textSize)
     local TweenService = game:GetService("TweenService")
     textSize = textSize or 14
@@ -121,7 +120,6 @@ local function CreateAnimatedTitle(parent, titleText, position, size, textSize)
     return titleContainer, letterLabels
 end
 
--- Key System Functions
 local function ShowKeySystem(config, callback)
     local Players = game:GetService("Players")
     local Player = Players.LocalPlayer
@@ -136,7 +134,6 @@ local function ShowKeySystem(config, callback)
         Parent = game:GetService("CoreGui") or Player:WaitForChild("PlayerGui")
     })
     
-    -- Background blur
     local Background = Create("Frame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
@@ -144,9 +141,8 @@ local function ShowKeySystem(config, callback)
         Parent = screenGui
     })
     
-    -- Key window
     local KeyWindow = Create("Frame", {
-        Size = UDim2.fromOffset(450, 450),
+        Size = UDim2.fromOffset(450, 470),
         Position = UDim2.fromScale(0.5, 0.5),
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(8, 8, 8),
@@ -154,7 +150,6 @@ local function ShowKeySystem(config, callback)
     }, {Create("UICorner", {CornerRadius = UDim.new(0, 12)})})
     ApplyPremiumBorder(KeyWindow, 2.5)
     
-    -- Animated Title
     local titleText = "KEY SYSTEM"
     local titleContainer = Create("Frame", {
         Size = UDim2.new(1, 0, 0, 60),
@@ -198,11 +193,12 @@ local function ShowKeySystem(config, callback)
         }):Play()
     end
     
-    -- Thumbnail if exists
+    local yOffset = 70
+    
     if config.Thumbnail and config.Thumbnail.Image then
         local ThumbnailFrame = Create("Frame", {
             Size = UDim2.new(0, 80, 0, 80),
-            Position = UDim2.new(0.5, -40, 0, 70),
+            Position = UDim2.new(0.5, -40, 0, yOffset),
             BackgroundColor3 = Color3.fromRGB(20, 20, 20),
             Parent = KeyWindow
         }, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
@@ -222,19 +218,14 @@ local function ShowKeySystem(config, callback)
                 TextSize = 14,
                 TextColor3 = Color3.fromRGB(230, 230, 230),
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0.5, -100, 0, 155),
+                Position = UDim2.new(0.5, -100, 0, yOffset + 85),
                 Size = UDim2.new(0, 200, 0, 25),
                 Parent = KeyWindow
             })
         end
-        local yOffset = 180
-    else
-        local yOffset = 120
+        yOffset = yOffset + 120
     end
     
-    local yOffset = config.Thumbnail and 180 or 120
-    
-    -- Note text
     if config.Note then
         Create("TextLabel", {
             Text = config.Note,
@@ -250,7 +241,6 @@ local function ShowKeySystem(config, callback)
         yOffset = yOffset + 45
     end
     
-    -- Key input box
     local KeyBox = Create("Frame", {
         Size = UDim2.new(0.85, 0, 0, 45),
         Position = UDim2.new(0.5, -190, 0, yOffset),
@@ -272,7 +262,6 @@ local function ShowKeySystem(config, callback)
         Parent = KeyBox
     })
     
-    -- Load saved key
     if config.SaveKey then
         local savedKey = getgenv and getgenv().SavedKey or nil
         if savedKey then
@@ -280,7 +269,6 @@ local function ShowKeySystem(config, callback)
         end
     end
     
-    -- Buttons container
     local ButtonsFrame = Create("Frame", {
         Size = UDim2.new(0.85, 0, 0, 40),
         Position = UDim2.new(0.5, -190, 0, yOffset + 55),
@@ -288,9 +276,8 @@ local function ShowKeySystem(config, callback)
         Parent = KeyWindow
     })
     
-    -- Verify button
     local VerifyBtn = Create("TextButton", {
-        Size = UDim2.new(0.48, 0, 1, 0),
+        Size = UDim2.new(config.URL and 0.48 or 1, 0, 1, 0),
         Position = UDim2.fromOffset(0, 0),
         BackgroundColor3 = Color3.fromRGB(30, 30, 30),
         Text = "VERIFY",
@@ -301,10 +288,8 @@ local function ShowKeySystem(config, callback)
     }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
     ApplyPremiumBorder(VerifyBtn, 1.5)
     
-    -- Get Key button (if URL provided)
-    local GetKeyBtn = nil
     if config.URL then
-        GetKeyBtn = Create("TextButton", {
+        local GetKeyBtn = Create("TextButton", {
             Size = UDim2.new(0.48, 0, 1, 0),
             Position = UDim2.new(0.52, 0, 0, 0),
             BackgroundColor3 = Color3.fromRGB(30, 30, 30),
@@ -322,7 +307,6 @@ local function ShowKeySystem(config, callback)
         end)
     end
     
-    -- Status text
     local StatusText = Create("TextLabel", {
         Text = "Enter your key to continue",
         Font = Enum.Font.Gotham,
@@ -334,14 +318,12 @@ local function ShowKeySystem(config, callback)
         Parent = KeyWindow
     })
     
-    -- Verify function
     local function VerifyKey(key)
         StatusText.Text = "Verifying key..."
         StatusText.TextColor3 = Color3.fromRGB(255, 200, 100)
         
         local verified = false
         
-        -- Check local keys
         if config.Key and type(config.Key) == "table" then
             for _, validKey in ipairs(config.Key) do
                 if key == validKey then
@@ -351,7 +333,6 @@ local function ShowKeySystem(config, callback)
             end
         end
         
-        -- Check through APIs
         if not verified and config.API then
             for _, api in ipairs(config.API) do
                 if api.Type == "platoboost" and api.ServiceId and api.Secret then
@@ -408,7 +389,6 @@ local function ShowKeySystem(config, callback)
         end
     end)
     
-    -- Enter key support
     UserInputService.InputBegan:Connect(function(input)
         if input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.KeypadEnter then
             if KeyInput.Text ~= "" then
@@ -417,7 +397,6 @@ local function ShowKeySystem(config, callback)
         end
     end)
     
-    -- Close button
     local CloseBtn = Create("ImageButton", {
         Size = UDim2.fromOffset(25, 25),
         Position = UDim2.new(1, -35, 0, 10),
@@ -431,10 +410,9 @@ local function ShowKeySystem(config, callback)
         if callback then callback(false) end
     end)
     
-    -- Animate window popup
     KeyWindow.Size = UDim2.fromOffset(0, 0)
     TweenService:Create(KeyWindow, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.fromOffset(450, 450)
+        Size = UDim2.fromOffset(450, 470)
     }):Play()
 end
 
@@ -452,7 +430,6 @@ function Library:CreateWindow(config)
     local titleContainer = nil
     local letterLabels = nil
     
-    -- Check if key system is enabled
     if config.KeySystem then
         ShowKeySystem(config.KeySystem, function(verified)
             if verified then
@@ -495,7 +472,6 @@ function Library:CreateWindow(config)
         }, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
         ApplyPremiumBorder(MainFrame, 2.8)
     
-        -- Draggable
         do
             local dragging, dragStart, startPos
             MainFrame.InputBegan:Connect(function(input) 
@@ -542,7 +518,6 @@ function Library:CreateWindow(config)
             Parent = MainFrame
         })
         
-        -- Create animated title with letter-by-letter display
         titleContainer, letterLabels = CreateAnimatedTitle(TopBar, titleText, UDim2.fromOffset(12, 0), UDim2.new(1, -60, 1, 0), 14)
         
         if config.Author then
