@@ -1,7 +1,8 @@
 --[[ 
-    PREMIUM MODERN SILVER UI (V11) - WITH KEY SYSTEM & ANIMATED TITLE
+    PREMIUM MODERN SILVER UI (V11) - COMPLETE KEY SYSTEM
     - Style: Compact & Refined
-    - Features: URL Loader, Animated Title (letter by letter), Key System
+    - Features: URL Loader, Animated Title (letter by letter), Complete Key System
+    - Key Methods: Local Keys, URL Get Key, PlatoBoost, PandaDevelopment, LuaArmor
     - Usage: loadstring(game:HttpGet("YOUR_URL_HERE"))()
 ]]
 
@@ -79,14 +80,12 @@ local function CreateAnimatedTitle(parent, titleText, position, size, textSize)
         Parent = parent
     })
     
-    -- Split title into individual characters
     local letters = {}
     for i = 1, #titleText do
         local char = string.sub(titleText, i, i)
         table.insert(letters, char)
     end
     
-    -- Create letter labels
     local letterLabels = {}
     local totalWidth = 0
     
@@ -111,7 +110,6 @@ local function CreateAnimatedTitle(parent, titleText, position, size, textSize)
         table.insert(letterLabels, letterLabel)
     end
     
-    -- Animate letters appearing one by one
     for i, letterLabel in ipairs(letterLabels) do
         letterLabel.TextTransparency = 1
         task.wait(0.05)
@@ -130,6 +128,7 @@ local function ShowKeySystem(config, callback)
     local TweenService = game:GetService("TweenService")
     local UserInputService = game:GetService("UserInputService")
     local HttpService = game:GetService("HttpService")
+    local Clipboard = game:GetService("Clipboard")
     
     local screenGui = Create("ScreenGui", {
         Name = "KeySystemUI",
@@ -147,7 +146,7 @@ local function ShowKeySystem(config, callback)
     
     -- Key window
     local KeyWindow = Create("Frame", {
-        Size = UDim2.fromOffset(420, 380),
+        Size = UDim2.fromOffset(450, 450),
         Position = UDim2.fromScale(0.5, 0.5),
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(8, 8, 8),
@@ -156,15 +155,14 @@ local function ShowKeySystem(config, callback)
     ApplyPremiumBorder(KeyWindow, 2.5)
     
     -- Animated Title
-    local titleText = config.Title or "KEY SYSTEM"
+    local titleText = "KEY SYSTEM"
     local titleContainer = Create("Frame", {
-        Size = UDim2.new(1, 0, 0, 50),
+        Size = UDim2.new(1, 0, 0, 60),
         Position = UDim2.fromOffset(0, 0),
         BackgroundTransparency = 1,
         Parent = KeyWindow
     })
     
-    -- Create animated title for key window
     local letters = {}
     for i = 1, #titleText do
         table.insert(letters, string.sub(titleText, i, i))
@@ -176,23 +174,22 @@ local function ShowKeySystem(config, callback)
         local letterLabel = Create("TextLabel", {
             Text = letter,
             Font = Enum.Font.GothamBold,
-            TextSize = 20,
+            TextSize = 24,
             TextColor3 = Color3.fromRGB(230, 230, 230),
             BackgroundTransparency = 1,
-            Size = UDim2.new(0, letter == " " and 10 or 24, 0, 40),
-            Position = UDim2.new(0.5, -((#letters * 24)/2) + totalWidth, 0, 10),
+            Size = UDim2.new(0, letter == " " and 12 or 28, 0, 50),
+            Position = UDim2.new(0.5, -((#letters * 28)/2) + totalWidth, 0, 5),
             Parent = titleContainer
         })
         
         if letter == " " then
-            totalWidth = totalWidth + 10
+            totalWidth = totalWidth + 12
         else
-            totalWidth = totalWidth + 24
+            totalWidth = totalWidth + 28
         end
         table.insert(letterLabels, letterLabel)
     end
     
-    -- Animate key window title
     for i, letterLabel in ipairs(letterLabels) do
         letterLabel.TextTransparency = 1
         task.wait(0.05)
@@ -200,6 +197,42 @@ local function ShowKeySystem(config, callback)
             TextTransparency = 0
         }):Play()
     end
+    
+    -- Thumbnail if exists
+    if config.Thumbnail and config.Thumbnail.Image then
+        local ThumbnailFrame = Create("Frame", {
+            Size = UDim2.new(0, 80, 0, 80),
+            Position = UDim2.new(0.5, -40, 0, 70),
+            BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+            Parent = KeyWindow
+        }, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
+        
+        local ThumbnailImage = Create("ImageLabel", {
+            Size = UDim2.new(1, -4, 1, -4),
+            Position = UDim2.fromOffset(2, 2),
+            BackgroundTransparency = 1,
+            Image = config.Thumbnail.Image,
+            Parent = ThumbnailFrame
+        }, {Create("UICorner", {CornerRadius = UDim.new(0, 8)})})
+        
+        if config.Thumbnail.Title then
+            Create("TextLabel", {
+                Text = config.Thumbnail.Title,
+                Font = Enum.Font.GothamBold,
+                TextSize = 14,
+                TextColor3 = Color3.fromRGB(230, 230, 230),
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0.5, -100, 0, 155),
+                Size = UDim2.new(0, 200, 0, 25),
+                Parent = KeyWindow
+            })
+        end
+        local yOffset = 180
+    else
+        local yOffset = 120
+    end
+    
+    local yOffset = config.Thumbnail and 180 or 120
     
     -- Note text
     if config.Note then
@@ -209,17 +242,18 @@ local function ShowKeySystem(config, callback)
             TextSize = 11,
             TextColor3 = Color3.fromRGB(150, 150, 150),
             BackgroundTransparency = 1,
-            Position = UDim2.new(0, 20, 0, 55),
-            Size = UDim2.new(1, -40, 0, 30),
+            Position = UDim2.new(0, 20, 0, yOffset),
+            Size = UDim2.new(1, -40, 0, 40),
             TextWrapped = true,
             Parent = KeyWindow
         })
+        yOffset = yOffset + 45
     end
     
     -- Key input box
     local KeyBox = Create("Frame", {
         Size = UDim2.new(0.85, 0, 0, 45),
-        Position = UDim2.new(0.5, -170, 0, 100),
+        Position = UDim2.new(0.5, -190, 0, yOffset),
         BackgroundColor3 = Color3.fromRGB(20, 20, 20),
         Parent = KeyWindow
     }, {Create("UICorner", {CornerRadius = UDim.new(0, 8)})})
@@ -238,27 +272,64 @@ local function ShowKeySystem(config, callback)
         Parent = KeyBox
     })
     
-    -- Submit button
-    local SubmitBtn = Create("TextButton", {
+    -- Load saved key
+    if config.SaveKey then
+        local savedKey = getgenv and getgenv().SavedKey or nil
+        if savedKey then
+            KeyInput.Text = savedKey
+        end
+    end
+    
+    -- Buttons container
+    local ButtonsFrame = Create("Frame", {
         Size = UDim2.new(0.85, 0, 0, 40),
-        Position = UDim2.new(0.5, -170, 0, 165),
+        Position = UDim2.new(0.5, -190, 0, yOffset + 55),
+        BackgroundTransparency = 1,
+        Parent = KeyWindow
+    })
+    
+    -- Verify button
+    local VerifyBtn = Create("TextButton", {
+        Size = UDim2.new(0.48, 0, 1, 0),
+        Position = UDim2.fromOffset(0, 0),
         BackgroundColor3 = Color3.fromRGB(30, 30, 30),
-        Text = "VERIFY KEY",
+        Text = "VERIFY",
         Font = Enum.Font.GothamBold,
         TextSize = 12,
         TextColor3 = Color3.fromRGB(220, 220, 220),
-        Parent = KeyWindow
+        Parent = ButtonsFrame
     }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
-    ApplyPremiumBorder(SubmitBtn, 1.5)
+    ApplyPremiumBorder(VerifyBtn, 1.5)
+    
+    -- Get Key button (if URL provided)
+    local GetKeyBtn = nil
+    if config.URL then
+        GetKeyBtn = Create("TextButton", {
+            Size = UDim2.new(0.48, 0, 1, 0),
+            Position = UDim2.new(0.52, 0, 0, 0),
+            BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+            Text = "GET KEY",
+            Font = Enum.Font.GothamBold,
+            TextSize = 12,
+            TextColor3 = Color3.fromRGB(220, 220, 220),
+            Parent = ButtonsFrame
+        }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
+        ApplyPremiumBorder(GetKeyBtn, 1.5)
+        
+        GetKeyBtn.MouseButton1Click:Connect(function()
+            Clipboard:set(config.URL)
+            Library:Notify("URL Copied!", "Key URL copied to clipboard!", 3)
+        end)
+    end
     
     -- Status text
     local StatusText = Create("TextLabel", {
-        Text = "Waiting for key...",
+        Text = "Enter your key to continue",
         Font = Enum.Font.Gotham,
         TextSize = 10,
         TextColor3 = Color3.fromRGB(150, 150, 150),
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0, 220),
+        Position = UDim2.new(0, 0, 0, yOffset + 105),
         Size = UDim2.new(1, 0, 0, 30),
         Parent = KeyWindow
     })
@@ -268,37 +339,45 @@ local function ShowKeySystem(config, callback)
         StatusText.Text = "Verifying key..."
         StatusText.TextColor3 = Color3.fromRGB(255, 200, 100)
         
-        -- Check through APIs
         local verified = false
-        local apiResults = {}
         
-        for _, api in ipairs(config.API or {}) do
-            if api.Type == "platoboost" and api.ServiceId and api.Secret then
-                -- PlatoBoost verification simulation
-                local success, response = pcall(function()
-                    return HttpService:JSONDecode(game:HttpGet("https://api.platoboost.com/v1/verify/" .. api.ServiceId .. "/" .. key .. "?secret=" .. api.Secret))
-                end)
-                if success and response and response.valid then
+        -- Check local keys
+        if config.Key and type(config.Key) == "table" then
+            for _, validKey in ipairs(config.Key) do
+                if key == validKey then
                     verified = true
-                    apiResults.platoboost = true
+                    break
                 end
-            elseif api.Type == "pandadevelopment" and api.ServiceId then
-                -- PandaDevelopment verification simulation
-                local success, response = pcall(function()
-                    return HttpService:JSONDecode(game:HttpGet("https://api.pandadevelopment.net/verify/" .. api.ServiceId .. "/" .. key))
-                end)
-                if success and response and response.success then
-                    verified = true
-                    apiResults.pandadevelopment = true
-                end
-            elseif api.Type == "luarmor" and api.ScriptId then
-                -- LuaArmor verification simulation
-                local success, response = pcall(function()
-                    return HttpService:JSONDecode(game:HttpGet("https://api.luarmor.net/v3/scripts/" .. api.ScriptId .. "/verify?key=" .. key))
-                end)
-                if success and response and response.valid then
-                    verified = true
-                    apiResults.luarmor = true
+            end
+        end
+        
+        -- Check through APIs
+        if not verified and config.API then
+            for _, api in ipairs(config.API) do
+                if api.Type == "platoboost" and api.ServiceId and api.Secret then
+                    local success, response = pcall(function()
+                        return HttpService:JSONDecode(game:HttpGet("https://api.platoboost.com/v1/verify/" .. api.ServiceId .. "/" .. key .. "?secret=" .. api.Secret))
+                    end)
+                    if success and response and response.valid then
+                        verified = true
+                        break
+                    end
+                elseif api.Type == "pandadevelopment" and api.ServiceId then
+                    local success, response = pcall(function()
+                        return HttpService:JSONDecode(game:HttpGet("https://api.pandadevelopment.net/verify/" .. api.ServiceId .. "/" .. key))
+                    end)
+                    if success and response and response.success then
+                        verified = true
+                        break
+                    end
+                elseif api.Type == "luarmor" and api.ScriptId then
+                    local success, response = pcall(function()
+                        return HttpService:JSONDecode(game:HttpGet("https://api.luarmor.net/v3/scripts/" .. api.ScriptId .. "/verify?key=" .. key))
+                    end)
+                    if success and response and response.valid then
+                        verified = true
+                        break
+                    end
                 end
             end
         end
@@ -306,6 +385,11 @@ local function ShowKeySystem(config, callback)
         if verified then
             StatusText.Text = "✓ Key verified successfully!"
             StatusText.TextColor3 = Color3.fromRGB(100, 255, 100)
+            
+            if config.SaveKey then
+                getgenv().SavedKey = key
+            end
+            
             task.wait(1)
             screenGui:Destroy()
             if callback then callback(true) end
@@ -315,7 +399,7 @@ local function ShowKeySystem(config, callback)
         end
     end
     
-    SubmitBtn.MouseButton1Click:Connect(function()
+    VerifyBtn.MouseButton1Click:Connect(function()
         if KeyInput.Text ~= "" then
             VerifyKey(KeyInput.Text)
         else
@@ -350,7 +434,7 @@ local function ShowKeySystem(config, callback)
     -- Animate window popup
     KeyWindow.Size = UDim2.fromOffset(0, 0)
     TweenService:Create(KeyWindow, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.fromOffset(420, 380)
+        Size = UDim2.fromOffset(450, 450)
     }):Play()
 end
 
@@ -369,7 +453,7 @@ function Library:CreateWindow(config)
     local letterLabels = nil
     
     -- Check if key system is enabled
-    if config.KeySystem and config.KeySystem.API then
+    if config.KeySystem then
         ShowKeySystem(config.KeySystem, function(verified)
             if verified then
                 CreateMainUI()
@@ -438,7 +522,6 @@ function Library:CreateWindow(config)
             MainFrame.Visible = not MainFrame.Visible
             if MainFrame.Visible then 
                 MainFrame:TweenSize(UDim2.fromOffset(420, 280), "Out", "Back", 0.4, true)
-                -- Re-animate title when window opens
                 if titleContainer and letterLabels then
                     for _, letterLabel in ipairs(letterLabels) do
                         letterLabel.TextTransparency = 1
@@ -462,7 +545,6 @@ function Library:CreateWindow(config)
         -- Create animated title with letter-by-letter display
         titleContainer, letterLabels = CreateAnimatedTitle(TopBar, titleText, UDim2.fromOffset(12, 0), UDim2.new(1, -60, 1, 0), 14)
         
-        -- Add author text if provided
         if config.Author then
             Create("TextLabel", {
                 Text = config.Author,
@@ -490,7 +572,6 @@ function Library:CreateWindow(config)
             end) 
         end)
     
-        -- Sidebar with Padding
         local Sidebar = Create("Frame", {
             Size = UDim2.new(0, 110, 1, -55),
             Position = UDim2.fromOffset(10, 45),
@@ -503,7 +584,6 @@ function Library:CreateWindow(config)
         })
         ApplyPremiumBorder(Sidebar, 1.2)
     
-        -- Container with Padding
         local Container = Create("Frame", {
             Size = UDim2.new(1, -140, 1, -55),
             Position = UDim2.fromOffset(130, 45),
