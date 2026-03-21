@@ -1,8 +1,9 @@
 --[[ 
-    PREMIUM MODERN SILVER UI (V11)
-    - Style: Compact & Refined
-    - Complete Components: Input, Dropdown, ColorPicker, Code, Section, Paragraph, Keybind
-    - SaveManager & InterfaceManager Integration
+    PREMIUM MODERN SILVER UI (V11) - FULL FEATURES
+    - Fixed Tab Switching
+    - Added Minimize Button
+    - Typing Animation for Title
+    - All Components Working
 ]]
 
 local UIS = game:GetService("UserInputService")
@@ -28,16 +29,6 @@ local LucideIcons = {
     ["star"] = "rbxassetid://74666642456643",
     ["bell"] = "rbxassetid://74666642456643",
     ["lock"] = "rbxassetid://74666642456643",
-    ["download"] = "rbxassetid://74666642456643",
-    ["upload"] = "rbxassetid://74666642456643",
-    ["trash"] = "rbxassetid://74666642456643",
-    ["edit"] = "rbxassetid://74666642456643",
-    ["plus"] = "rbxassetid://74666642456643",
-    ["minus"] = "rbxassetid://74666642456643",
-    ["check"] = "rbxassetid://74666642456643",
-    ["x"] = "rbxassetid://74666642456643",
-    ["chevron-up"] = "rbxassetid://74666642456643",
-    ["chevron-down"] = "rbxassetid://74666642456643",
     ["code"] = "rbxassetid://74666642456643",
     ["palette"] = "rbxassetid://74666642456643",
     ["keyboard"] = "rbxassetid://74666642456643",
@@ -81,106 +72,24 @@ local function ApplyPremiumBorder(parent, thickness)
     return stroke
 end
 
--- Color Picker Helper
-local function CreateColorPicker(parent, currentColor, callback)
-    local pickerFrame = Create("Frame", {
-        Size = UDim2.new(1, 0, 0, 180),
-        BackgroundColor3 = Color3.fromRGB(25, 25, 25),
-        BackgroundTransparency = 1,
-        Visible = false,
-        Parent = parent
-    }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
+-- Typing Animation Function
+local function AnimateTitle(titleLabel, fullText, callback)
+    local currentText = ""
+    local index = 1
     
-    local hueBar = Create("Frame", {
-        Size = UDim2.new(0, 200, 0, 15),
-        Position = UDim2.new(0.5, -100, 0, 20),
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        Parent = pickerFrame
-    })
-    
-    local saturationBar = Create("Frame", {
-        Size = UDim2.new(0, 200, 0, 15),
-        Position = UDim2.new(0.5, -100, 0, 45),
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        Parent = pickerFrame
-    })
-    
-    local colorDisplay = Create("Frame", {
-        Size = UDim2.fromOffset(30, 30),
-        Position = UDim2.new(0.5, -65, 0, 70),
-        BackgroundColor3 = currentColor,
-        Parent = pickerFrame
-    }, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
-    
-    local okBtn = Create("TextButton", {
-        Size = UDim2.fromOffset(50, 25),
-        Position = UDim2.new(0.5, -25, 0, 110),
-        Text = "OK",
-        BackgroundColor3 = Color3.fromRGB(40, 40, 40),
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        Parent = pickerFrame
-    }, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
-    
-    local function updateColor()
-        colorDisplay.BackgroundColor3 = currentColor
-        if callback then callback(currentColor) end
+    local function typeNextChar()
+        if index <= #fullText then
+            currentText = currentText .. string.sub(fullText, index, index)
+            titleLabel.Text = currentText:upper()
+            index = index + 1
+            task.wait(0.05) -- 0.05 detik per huruf (lebih cepat dari 0.5s)
+            typeNextChar()
+        else
+            if callback then callback() end
+        end
     end
     
-    okBtn.MouseButton1Click:Connect(function()
-        pickerFrame.Visible = false
-    end)
-    
-    return pickerFrame, function()
-        pickerFrame.Visible = not pickerFrame.Visible
-    end
-end
-
--- Keybind Helper
-local function CreateKeybind(parent, currentKey, callback)
-    local keybindBtn = Create("TextButton", {
-        Size = UDim2.new(0, 80, 0, 25),
-        Text = currentKey or "None",
-        BackgroundColor3 = Color3.fromRGB(35, 35, 35),
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        Font = Enum.Font.GothamMedium,
-        TextSize = 10,
-        Parent = parent
-    }, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
-    
-    local listening = false
-    local connection
-    
-    keybindBtn.MouseButton1Click:Connect(function()
-        if listening then return end
-        listening = true
-        keybindBtn.Text = "..."
-        
-        connection = UIS.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.UserInputType == Enum.UserInputType.Keyboard then
-                local key = input.KeyCode.Name
-                listening = false
-                keybindBtn.Text = key
-                if callback then callback(key) end
-                connection:Disconnect()
-            elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
-                listening = false
-                keybindBtn.Text = "Mouse1"
-                if callback then callback("MouseButton1") end
-                connection:Disconnect()
-            end
-        end)
-        
-        task.delay(5, function()
-            if listening then
-                listening = false
-                keybindBtn.Text = currentKey or "None"
-                if connection then connection:Disconnect() end
-            end
-        end)
-    end)
-    
-    return keybindBtn
+    typeNextChar()
 end
 
 function Library:Notify(title, content, duration)
@@ -214,7 +123,7 @@ function Library:CreateWindow(config)
     local OpenButton = Create("ImageButton", {Size = UDim2.fromOffset(40, 40), Position = UDim2.new(0, 15, 0.5, -20), BackgroundColor3 = Color3.fromRGB(10, 10, 10), Image = iconImage, Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(1, 0)})})
     ApplyPremiumBorder(OpenButton, 2)
 
-    local MainFrame = Create("Frame", {Name = "MainFrame", Size = UDim2.fromOffset(500, 400), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = Color3.fromRGB(8, 8, 8), Visible = true, Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
+    local MainFrame = Create("Frame", {Name = "MainFrame", Size = UDim2.fromOffset(500, 450), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = Color3.fromRGB(8, 8, 8), Visible = true, Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
     ApplyPremiumBorder(MainFrame, 2.8)
 
     -- Draggable
@@ -227,53 +136,170 @@ function Library:CreateWindow(config)
 
     OpenButton.MouseButton1Click:Connect(function()
         MainFrame.Visible = not MainFrame.Visible
-        if MainFrame.Visible then MainFrame:TweenSize(UDim2.fromOffset(500, 400), "Out", "Back", 0.4, true) end
+        if MainFrame.Visible then MainFrame:TweenSize(UDim2.fromOffset(500, 450), "Out", "Back", 0.4, true) end
     end)
 
-    local TopBar = Create("Frame", {Size = UDim2.new(1, 0, 0, 45), BackgroundTransparency = 1, Parent = MainFrame})
+    local TopBar = Create("Frame", {Size = UDim2.new(1, 0, 0, 55), BackgroundTransparency = 1, Parent = MainFrame})
     
-    local TitleContainer = Create("Frame", {Size = UDim2.new(1, -50, 1, 0), Position = UDim2.fromOffset(12, 0), BackgroundTransparency = 1, Parent = TopBar})
-    local TitleIcon = Create("ImageLabel", {Size = UDim2.fromOffset(18, 18), Position = UDim2.fromOffset(0, 13), BackgroundTransparency = 1, Image = iconImage, ImageColor3 = Color3.fromRGB(200, 200, 200), Parent = TitleContainer})
-    Create("TextLabel", {Text = titleText:upper(), Font = Enum.Font.GothamBold, TextSize = 12, TextColor3 = Color3.fromRGB(230, 230, 230), TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(25, 0), Size = UDim2.new(1, -25, 0.6, 0), Parent = TitleContainer})
+    local TitleContainer = Create("Frame", {Size = UDim2.new(1, -100, 1, 0), Position = UDim2.fromOffset(12, 0), BackgroundTransparency = 1, Parent = TopBar})
+    local TitleIcon = Create("ImageLabel", {Size = UDim2.fromOffset(20, 20), Position = UDim2.fromOffset(0, 17), BackgroundTransparency = 1, Image = iconImage, ImageColor3 = Color3.fromRGB(200, 200, 200), Parent = TitleContainer})
     
+    -- Title with typing animation
+    local TitleLabel = Create("TextLabel", {
+        Text = "", 
+        Font = Enum.Font.GothamBold, 
+        TextSize = 14, 
+        TextColor3 = Color3.fromRGB(230, 230, 230), 
+        TextXAlignment = "Left", 
+        BackgroundTransparency = 1, 
+        Position = UDim2.fromOffset(28, 10), 
+        Size = UDim2.new(1, -28, 0, 25), 
+        Parent = TitleContainer
+    })
+    
+    -- Author text
     if author ~= "" then
-        Create("TextLabel", {Text = author, Font = Enum.Font.Gotham, TextSize = 8, TextColor3 = Color3.fromRGB(150, 150, 150), TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(25, 22), Size = UDim2.new(1, -25, 0.4, 0), Parent = TitleContainer})
+        Create("TextLabel", {Text = author, Font = Enum.Font.Gotham, TextSize = 9, TextColor3 = Color3.fromRGB(150, 150, 150), TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(28, 32), Size = UDim2.new(1, -28, 0, 18), Parent = TitleContainer})
     end
     
-    local CloseBtn = Create("ImageButton", {Size = UDim2.fromOffset(20, 20), Position = UDim2.new(1, -30, 0, 12), BackgroundTransparency = 1, Image = "rbxassetid://74666642456643", ImageColor3 = Color3.fromRGB(200, 200, 200), Parent = TopBar})
-    CloseBtn.MouseButton1Click:Connect(function() MainFrame:TweenSize(UDim2.fromOffset(0, 0), "In", "Back", 0.3, true, function() MainFrame.Visible = false end) end)
+    -- Minimize Button
+    local MinBtn = Create("ImageButton", {
+        Size = UDim2.fromOffset(20, 20), 
+        Position = UDim2.new(1, -60, 0, 17), 
+        BackgroundTransparency = 1, 
+        Image = "rbxassetid://74666642456643", 
+        ImageColor3 = Color3.fromRGB(200, 200, 200),
+        Rotation = 180,
+        Parent = TopBar
+    })
+    
+    -- Close Button
+    local CloseBtn = Create("ImageButton", {
+        Size = UDim2.fromOffset(20, 20), 
+        Position = UDim2.new(1, -30, 0, 17), 
+        BackgroundTransparency = 1, 
+        Image = "rbxassetid://74666642456643", 
+        ImageColor3 = Color3.fromRGB(200, 200, 200), 
+        Parent = TopBar
+    })
+    
+    local isMinimized = false
+    local originalSize = MainFrame.Size
+    local minimizedSize = UDim2.fromOffset(500, 55)
+    
+    MinBtn.MouseButton1Click:Connect(function()
+        isMinimized = not isMinimized
+        local targetSize = isMinimized and minimizedSize or originalSize
+        local targetRotation = isMinimized and 0 or 180
+        
+        MainFrame:TweenSize(targetSize, "Out", "Quad", 0.3, true)
+        TweenService:Create(MinBtn, TweenInfo.new(0.3), {Rotation = targetRotation}):Play()
+        
+        -- Hide content when minimized
+        for _, child in pairs(MainFrame:GetChildren()) do
+            if child ~= TopBar and child ~= MinBtn and child ~= CloseBtn then
+                child.Visible = not isMinimized
+            end
+        end
+    end)
+    
+    CloseBtn.MouseButton1Click:Connect(function() 
+        MainFrame:TweenSize(UDim2.fromOffset(0, 0), "In", "Back", 0.3, true, function() 
+            MainFrame.Visible = false 
+        end) 
+    end)
 
-    local Sidebar = Create("Frame", {Size = UDim2.new(0, 120, 1, -65), Position = UDim2.fromOffset(10, 55), BackgroundColor3 = Color3.fromRGB(12, 12, 12), Parent = MainFrame}, {
+    -- Typing Animation Loop
+    local function startTypingAnimation()
+        local function animate()
+            TitleLabel.Text = ""
+            AnimateTitle(TitleLabel, titleText, function()
+                task.wait(5) -- Tunggu 5 detik setelah selesai
+                if MainFrame.Visible then
+                    animate() -- Ulang animasi
+                end
+            end)
+        end
+        animate()
+    end
+    
+    startTypingAnimation()
+
+    -- Sidebar with Padding
+    local Sidebar = Create("Frame", {Size = UDim2.new(0, 120, 1, -75), Position = UDim2.fromOffset(10, 65), BackgroundColor3 = Color3.fromRGB(12, 12, 12), Parent = MainFrame}, {
         Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
-        Create("UIListLayout", {Padding = UDim.new(0, 6), HorizontalAlignment = "Center"}),
-        Create("UIPadding", {PaddingTop = UDim.new(0, 8)})
+        Create("UIListLayout", {Padding = UDim.new(0, 8), HorizontalAlignment = "Center"}),
+        Create("UIPadding", {PaddingTop = UDim.new(0, 10)})
     })
     ApplyPremiumBorder(Sidebar, 1.2)
 
-    local Container = Create("ScrollingFrame", {Size = UDim2.new(1, -150, 1, -65), Position = UDim2.fromOffset(140, 55), BackgroundTransparency = 1, ScrollBarThickness = 4, Parent = MainFrame}, {
-        Create("UIListLayout", {Padding = UDim.new(0, 12), HorizontalAlignment = "Center"}),
-        Create("UIPadding", {PaddingTop = UDim.new(0, 5), PaddingBottom = UDim.new(0, 5)})
-    })
+    -- Container for Tabs
+    local Container = Create("Frame", {Size = UDim2.new(1, -150, 1, -75), Position = UDim2.fromOffset(140, 65), BackgroundTransparency = 1, Parent = MainFrame})
 
     local Window = {}
     local firstTab = true
-    local tabs = {}
+    local currentPage = nil
+    local activeTab = nil
+    local tabButtons = {}
+    local tabPages = {}
 
     function Window:CreateTab(name)
-        local TabBtn = Create("TextButton", {Size = UDim2.new(0.85, 0, 0, 32), BackgroundColor3 = firstTab and Color3.fromRGB(220, 220, 220) or Color3.fromRGB(20, 20, 20), Text = name, TextColor3 = firstTab and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(200, 200, 200), Font = Enum.Font.GothamBold, TextSize = 11, Parent = Sidebar}, {Create("UICorner", {CornerRadius = UDim.new(0, 5)})})
-        local Page = Create("ScrollingFrame", {Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Visible = firstTab, ScrollBarThickness = 4, Parent = Container}, {
+        -- Create Tab Button
+        local TabBtn = Create("TextButton", {
+            Size = UDim2.new(0.85, 0, 0, 34), 
+            BackgroundColor3 = firstTab and Color3.fromRGB(220, 220, 220) or Color3.fromRGB(20, 20, 20), 
+            Text = name, 
+            TextColor3 = firstTab and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(200, 200, 200), 
+            Font = Enum.Font.GothamBold, 
+            TextSize = 11, 
+            Parent = Sidebar
+        }, {Create("UICorner", {CornerRadius = UDim.new(0, 5)})})
+        
+        -- Create Page
+        local Page = Create("ScrollingFrame", {
+            Size = UDim2.fromScale(1, 1), 
+            BackgroundTransparency = 1, 
+            Visible = firstTab, 
+            ScrollBarThickness = 4, 
+            Parent = Container
+        }, {
             Create("UIListLayout", {Padding = UDim.new(0, 12), HorizontalAlignment = "Center"}),
             Create("UIPadding", {PaddingTop = UDim.new(0, 5), PaddingBottom = UDim.new(0, 5)})
         })
-
+        
+        -- Store for later use
+        tabButtons[name] = TabBtn
+        tabPages[name] = Page
+        
+        -- Tab Click Handler
         TabBtn.MouseButton1Click:Connect(function()
-            for _, v in pairs(Sidebar:GetChildren()) do if v:IsA("TextButton") then TweenService:Create(v, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(20, 20, 20), TextColor3 = Color3.fromRGB(200, 200, 200)}):Play() end end
-            for _, v in pairs(Container:GetChildren()) do v.Visible = false end
-            TweenService:Create(TabBtn, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(220, 220, 220), TextColor3 = Color3.fromRGB(20, 20, 20)}):Play()
+            -- Update all tab buttons
+            for tabName, btn in pairs(tabButtons) do
+                TweenService:Create(btn, TweenInfo.new(0.2), {
+                    BackgroundColor3 = Color3.fromRGB(20, 20, 20), 
+                    TextColor3 = Color3.fromRGB(200, 200, 200)
+                }):Play()
+            end
+            
+            -- Update current tab button
+            TweenService:Create(TabBtn, TweenInfo.new(0.2), {
+                BackgroundColor3 = Color3.fromRGB(220, 220, 220), 
+                TextColor3 = Color3.fromRGB(20, 20, 20)
+            }):Play()
+            
+            -- Hide all pages
+            for _, page in pairs(tabPages) do
+                page.Visible = false
+            end
+            
+            -- Show selected page
             Page.Visible = true
+            currentPage = Page
+            activeTab = name
         end)
 
         firstTab = false
+        
         local Tab = {}
         
         -- Section Component
@@ -296,7 +322,13 @@ function Library:CreateWindow(config)
         function Tab:CreateButton(text, callback)
             local Btn = Create("TextButton", {Size = UDim2.new(0.96, 0, 0, 38), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Text = text, TextColor3 = Color3.fromRGB(230, 230, 230), Font = Enum.Font.GothamMedium, TextSize = 11, Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
             ApplyPremiumBorder(Btn, 1)
-            Btn.MouseButton1Click:Connect(function() if callback then callback() end Btn:TweenSize(UDim2.new(0.9, 0, 0, 35), "Out", "Quad", 0.1, true, function() Btn:TweenSize(UDim2.new(0.96, 0, 0, 38), "Out", "Quad", 0.1, true) end) end)
+            Btn.MouseButton1Click:Connect(function() 
+                if callback then callback() end 
+                Btn:TweenSize(UDim2.new(0.9, 0, 0, 35), "Out", "Quad", 0.1, true, function() 
+                    Btn:TweenSize(UDim2.new(0.96, 0, 0, 38), "Out", "Quad", 0.1, true) 
+                end) 
+            end)
+            return Btn
         end
         
         -- Toggle Component
@@ -353,18 +385,18 @@ function Library:CreateWindow(config)
         
         -- Dropdown Component
         function Tab:CreateDropdown(text, options, callback, flagName)
-            local DropFrame = Create("Frame", {Size = UDim2.new(0.96, 0, 0, 65), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
+            local DropFrame = Create("Frame", {Size = UDim2.new(0.96, 0, 0, 75), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
             ApplyPremiumBorder(DropFrame, 1)
             Create("TextLabel", {Text = text, Font = Enum.Font.GothamMedium, TextSize = 11, TextColor3 = Color3.fromRGB(200, 200, 200), TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 8), Size = UDim2.new(1, -24, 0, 20), Parent = DropFrame})
             
-            local DropBtn = Create("TextButton", {Size = UDim2.new(1, -24, 0, 30), Position = UDim2.fromOffset(12, 28), Text = options[1] or "Select", BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = Color3.fromRGB(230, 230, 230), Font = Enum.Font.Gotham, TextSize = 11, Parent = DropFrame}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
+            local DropBtn = Create("TextButton", {Size = UDim2.new(1, -24, 0, 32), Position = UDim2.fromOffset(12, 32), Text = options[1] or "Select", BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = Color3.fromRGB(230, 230, 230), Font = Enum.Font.Gotham, TextSize = 11, Parent = DropFrame}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
             
             local DropList = Create("ScrollingFrame", {Size = UDim2.new(1, 0, 0, 100), Position = UDim2.new(0, 0, 1, 5), BackgroundColor3 = Color3.fromRGB(25, 25, 25), Visible = false, Parent = DropBtn}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
             
             local listLayout = Create("UIListLayout", {Padding = UDim.new(0, 2), Parent = DropList})
             
             for _, opt in pairs(options) do
-                local optBtn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 25), Text = opt, BackgroundColor3 = Color3.fromRGB(35, 35, 35), TextColor3 = Color3.fromRGB(200, 200, 200), Font = Enum.Font.Gotham, TextSize = 10, Parent = DropList}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
+                local optBtn = Create("TextButton", {Size = UDim2.new(1, 0, 0, 28), Text = opt, BackgroundColor3 = Color3.fromRGB(35, 35, 35), TextColor3 = Color3.fromRGB(200, 200, 200), Font = Enum.Font.Gotham, TextSize = 10, Parent = DropList}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
                 optBtn.MouseButton1Click:Connect(function()
                     DropBtn.Text = opt
                     DropList.Visible = false
@@ -399,13 +431,7 @@ function Library:CreateWindow(config)
             local currentColor = defaultColor or Color3.fromRGB(255, 0, 0)
             local pickerVisible = false
             
-            -- Simple color picker popup
             local pickerFrame = Create("Frame", {Size = UDim2.fromOffset(150, 120), Position = UDim2.new(0, 0, 1, 5), BackgroundColor3 = Color3.fromRGB(30, 30, 30), Visible = false, Parent = ColorBtn}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
-            
-            local hueBar = Create("Frame", {Size = UDim2.new(1, -20, 0, 20), Position = UDim2.fromOffset(10, 10), BackgroundColor3 = Color3.fromRGB(255, 255, 255), Parent = pickerFrame})
-            local redSlider = Create("Frame", {Size = UDim2.new(1, -20, 0, 15), Position = UDim2.fromOffset(10, 40), BackgroundColor3 = Color3.fromRGB(255, 255, 255), Parent = pickerFrame})
-            local greenSlider = Create("Frame", {Size = UDim2.new(1, -20, 0, 15), Position = UDim2.fromOffset(10, 60), BackgroundColor3 = Color3.fromRGB(255, 255, 255), Parent = pickerFrame})
-            local blueSlider = Create("Frame", {Size = UDim2.new(1, -20, 0, 15), Position = UDim2.fromOffset(10, 80), BackgroundColor3 = Color3.fromRGB(255, 255, 255), Parent = pickerFrame})
             
             local function updateColor()
                 ColorBtn.BackgroundColor3 = currentColor
@@ -431,12 +457,12 @@ function Library:CreateWindow(config)
         
         -- Code Component
         function Tab:CreateCode(text, callback)
-            local CodeFrame = Create("Frame", {Size = UDim2.new(0.96, 0, 0, 80), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
+            local CodeFrame = Create("Frame", {Size = UDim2.new(0.96, 0, 0, 100), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
             ApplyPremiumBorder(CodeFrame, 1)
             
-            local CodeBox = Create("TextBox", {Size = UDim2.new(1, -24, 0, 50), Position = UDim2.fromOffset(12, 10), Text = text or "", BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = Color3.fromRGB(100, 200, 100), Font = Enum.Font.Code, TextSize = 10, TextXAlignment = "Left", TextYAlignment = "Top", TextWrapped = true, Parent = CodeFrame}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
+            local CodeBox = Create("TextBox", {Size = UDim2.new(1, -24, 0, 60), Position = UDim2.fromOffset(12, 10), Text = text or "", BackgroundColor3 = Color3.fromRGB(30, 30, 30), TextColor3 = Color3.fromRGB(100, 200, 100), Font = Enum.Font.Code, TextSize = 10, TextXAlignment = "Left", TextYAlignment = "Top", TextWrapped = true, Parent = CodeFrame}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
             
-            local ExecBtn = Create("TextButton", {Size = UDim2.new(0, 60, 0, 25), Position = UDim2.new(1, -72, 1, -30), Text = "Execute", BackgroundColor3 = Color3.fromRGB(40, 40, 40), TextColor3 = Color3.fromRGB(230, 230, 230), Font = Enum.Font.GothamBold, TextSize = 10, Parent = CodeFrame}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
+            local ExecBtn = Create("TextButton", {Size = UDim2.new(0, 70, 0, 28), Position = UDim2.new(1, -82, 1, -38), Text = "Execute", BackgroundColor3 = Color3.fromRGB(40, 40, 40), TextColor3 = Color3.fromRGB(230, 230, 230), Font = Enum.Font.GothamBold, TextSize = 10, Parent = CodeFrame}, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
             
             ExecBtn.MouseButton1Click:Connect(function()
                 if callback then callback(CodeBox.Text) end
@@ -447,7 +473,7 @@ function Library:CreateWindow(config)
         
         -- Keybind Component
         function Tab:CreateKeybind(text, defaultKey, callback, flagName)
-            local KeyFrame = Create("Frame", {Size = UDim2.new(0.96, 0, 0, 55), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
+            local KeyFrame = Create("Frame", {Size = UDim2.new(0.96, 0, 0, 65), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
             ApplyPremiumBorder(KeyFrame, 1)
             Create("TextLabel", {Text = text, Font = Enum.Font.GothamMedium, TextSize = 11, TextColor3 = Color3.fromRGB(200, 200, 200), TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 8), Size = UDim2.new(1, -24, 0, 20), Parent = KeyFrame})
             
@@ -456,51 +482,95 @@ function Library:CreateWindow(config)
                 currentKey = Library.Flags[flagName]
             end
             
-            local keybindBtn = CreateKeybind(KeyFrame, currentKey, function(newKey)
-                currentKey = newKey
-                if callback then callback(newKey) end
-                if flagName then 
-                    Library.Flags[flagName] = newKey
-                    if Library.SaveManager then Library.SaveManager:Set(flagName, newKey) end
-                end
+            -- Create Keybind Button
+            local keybindBtn = Create("TextButton", {
+                Size = UDim2.new(0, 100, 0, 30),
+                Position = UDim2.new(0.5, -50, 0, 28),
+                Text = currentKey,
+                BackgroundColor3 = Color3.fromRGB(35, 35, 35),
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                Font = Enum.Font.GothamMedium,
+                TextSize = 11,
+                Parent = KeyFrame
+            }, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
+            
+            local listening = false
+            local connection
+            
+            keybindBtn.MouseButton1Click:Connect(function()
+                if listening then return end
+                listening = true
+                keybindBtn.Text = "..."
+                
+                connection = UIS.InputBegan:Connect(function(input, gameProcessed)
+                    if gameProcessed then return end
+                    local key = ""
+                    if input.UserInputType == Enum.UserInputType.Keyboard then
+                        key = input.KeyCode.Name
+                    elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        key = "Mouse1"
+                    elseif input.UserInputType == Enum.UserInputType.MouseButton2 then
+                        key = "Mouse2"
+                    elseif input.UserInputType == Enum.UserInputType.MouseButton3 then
+                        key = "Mouse3"
+                    end
+                    
+                    if key ~= "" then
+                        listening = false
+                        keybindBtn.Text = key
+                        currentKey = key
+                        if callback then callback(key) end
+                        if flagName then 
+                            Library.Flags[flagName] = key
+                            if Library.SaveManager then Library.SaveManager:Set(flagName, key) end
+                        end
+                        connection:Disconnect()
+                    end
+                end)
+                
+                task.delay(5, function()
+                    if listening then
+                        listening = false
+                        keybindBtn.Text = currentKey
+                        if connection then connection:Disconnect() end
+                    end
+                end)
             end)
-            keybindBtn.Position = UDim2.new(0.5, -40, 0, 32)
             
             return KeyFrame
         end
         
-        tabs[name] = Tab
         return Tab
     end
     
     -- Add Settings Tab if SaveManager is loaded
     function Window:AddSettingsTab()
         if Library.SaveManager and Library.InterfaceManager then
-            local settingsTab = Window:CreateTab("Settings")
+            local settingsTab = Window:CreateTab("⚙️ SETTINGS")
             
             settingsTab:CreateSection("Configuration")
-            settingsTab:CreateButton("Save Configuration", function()
+            settingsTab:CreateButton("💾 Save Configuration", function()
                 Library.SaveManager:Save()
                 Library:Notify("Saved", "Configuration saved successfully!", 3)
             end)
             
-            settingsTab:CreateButton("Load Configuration", function()
+            settingsTab:CreateButton("📂 Load Configuration", function()
                 Library.SaveManager:Load()
                 Library:Notify("Loaded", "Configuration loaded successfully!", 3)
             end)
             
-            settingsTab:CreateButton("Reset Configuration", function()
+            settingsTab:CreateButton("🔄 Reset Configuration", function()
                 Library.SaveManager:Reset()
                 Library:Notify("Reset", "Configuration reset to default!", 3)
             end)
             
             settingsTab:CreateSection("Interface")
-            settingsTab:CreateButton("Toggle UI", function()
+            settingsTab:CreateButton("🔽 Toggle UI", function()
                 MainFrame.Visible = not MainFrame.Visible
             end)
             
             if Library.InterfaceManager then
-                settingsTab:CreateButton("Change Theme", function()
+                settingsTab:CreateButton("🎨 Change Theme", function()
                     Library.InterfaceManager:ToggleTheme()
                 end)
             end
