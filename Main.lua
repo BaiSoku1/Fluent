@@ -103,7 +103,7 @@ function Library:CreateWindow(config)
         end)
     end
 
-    local MainFrame = Create("Frame", {Name = "MainFrame", Size = UDim2.fromOffset(420, 320), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = Color3.fromRGB(8, 8, 8), Visible = true, Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
+    local MainFrame = Create("Frame", {Name = "MainFrame", Size = UDim2.fromOffset(420, 380), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = Color3.fromRGB(8, 8, 8), Visible = true, Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
     ApplyPremiumBorder(MainFrame, 2.8)
 
     -- Make MainFrame Draggable
@@ -131,7 +131,7 @@ function Library:CreateWindow(config)
 
     OpenButton.MouseButton1Click:Connect(function()
         MainFrame.Visible = not MainFrame.Visible
-        if MainFrame.Visible then MainFrame:TweenSize(UDim2.fromOffset(420, 320), "Out", "Back", 0.4, true) end
+        if MainFrame.Visible then MainFrame:TweenSize(UDim2.fromOffset(420, 380), "Out", "Back", 0.4, true) end
     end)
 
     -- Top Bar with Title
@@ -210,7 +210,7 @@ function Library:CreateWindow(config)
         local name = tabConfig.Title or "Tab"
         
         local TabBtn = Create("TextButton", {Size = UDim2.new(0.85, 0, 0, 30), BackgroundColor3 = firstTab and Color3.fromRGB(220, 220, 220) or Color3.fromRGB(20, 20, 20), Text = name, TextColor3 = firstTab and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(200, 200, 200), Font = Enum.Font.GothamBold, TextSize = 11, Parent = Sidebar}, {Create("UICorner", {CornerRadius = UDim.new(0, 5)})})
-        local Page = Create("ScrollingFrame", {Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Visible = firstTab, ScrollBarThickness = 0, Parent = Container}, {Create("UIListLayout", {Padding = UDim.new(0, 8), HorizontalAlignment = "Center"}), Create("UIPadding", {PaddingTop = UDim.new(0, 2)})})
+        local Page = Create("ScrollingFrame", {Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Visible = firstTab, ScrollBarThickness = 4, ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100), Parent = Container}, {Create("UIListLayout", {Padding = UDim.new(0, 8), HorizontalAlignment = "Center"}), Create("UIPadding", {PaddingTop = UDim.new(0, 2), PaddingBottom = UDim.new(0, 8)})})
 
         TabBtn.MouseButton1Click:Connect(function()
             for _, v in pairs(Sidebar:GetChildren()) do if v:IsA("TextButton") then TweenService:Create(v, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(20, 20, 20), TextColor3 = Color3.fromRGB(200, 200, 200)}):Play() end end
@@ -409,7 +409,6 @@ function Library:CreateWindow(config)
                 callback(currentValue)
             end)
             
-            -- Optional: Return the current value getter
             return {
                 GetValue = function()
                     return currentValue
@@ -433,11 +432,34 @@ function Library:CreateWindow(config)
             local selected = default
             
             -- Main Dropdown Frame
-            local DropdownFrame = Create("Frame", {Size = UDim2.new(0.96, 0, 0, 45), BackgroundColor3 = Color3.fromRGB(18, 18, 18), Parent = Page}, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
+            local DropdownFrame = Create("Frame", {
+                Size = UDim2.new(0.96, 0, 0, 45),
+                BackgroundColor3 = Color3.fromRGB(18, 18, 18),
+                Parent = Page,
+                ClipsDescendants = false
+            }, {Create("UICorner", {CornerRadius = UDim.new(0, 6)})})
             ApplyPremiumBorder(DropdownFrame, 1)
             
+            -- Title and selected area (clickable)
+            local ClickArea = Create("TextButton", {
+                Size = UDim2.new(1, 0, 1, 0),
+                BackgroundTransparency = 1,
+                Text = "",
+                Parent = DropdownFrame
+            })
+            
             -- Title
-            Create("TextLabel", {Text = text, Font = Enum.Font.GothamMedium, TextSize = 11, TextColor3 = Color3.fromRGB(200, 200, 200), TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -40, 1, 0), Parent = DropdownFrame})
+            Create("TextLabel", {
+                Text = text,
+                Font = Enum.Font.GothamMedium,
+                TextSize = 11,
+                TextColor3 = Color3.fromRGB(200, 200, 200),
+                TextXAlignment = "Left",
+                BackgroundTransparency = 1,
+                Position = UDim2.fromOffset(10, 0),
+                Size = UDim2.new(0.6, 0, 1, 0),
+                Parent = DropdownFrame
+            })
             
             -- Selected Value Display
             local SelectedLabel = Create("TextLabel", {
@@ -447,8 +469,8 @@ function Library:CreateWindow(config)
                 TextColor3 = Color3.fromRGB(220, 220, 220),
                 TextXAlignment = "Right",
                 BackgroundTransparency = 1,
-                Position = UDim2.new(1, -50, 0, 0),
-                Size = UDim2.new(0, 100, 1, 0),
+                Position = UDim2.new(0.7, 0, 0, 0),
+                Size = UDim2.new(0.25, -30, 1, 0),
                 Parent = DropdownFrame
             })
             
@@ -464,13 +486,14 @@ function Library:CreateWindow(config)
                 Parent = DropdownFrame
             })
             
-            -- Dropdown List Container
+            -- Dropdown List Container (Frame that will expand)
             local DropdownList = Create("Frame", {
-                Size = UDim2.new(0.96, 0, 0, 0),
-                Position = UDim2.new(0, 0, 1, 5),
+                Size = UDim2.new(1, 0, 0, 0),
+                Position = UDim2.new(0, 0, 1, 2),
                 BackgroundColor3 = Color3.fromRGB(25, 25, 25),
                 Visible = false,
                 ClipsDescendants = true,
+                ZIndex = 10,
                 Parent = DropdownFrame
             }, {
                 Create("UICorner", {CornerRadius = UDim.new(0, 6)}),
@@ -481,53 +504,68 @@ function Library:CreateWindow(config)
             
             -- Create Option Buttons
             local optionButtons = {}
-            for i, option in ipairs(options) do
-                local OptionBtn = Create("TextButton", {
-                    Size = UDim2.new(0.95, 0, 0, 30),
-                    BackgroundColor3 = Color3.fromRGB(35, 35, 35),
-                    Text = option,
-                    TextColor3 = Color3.fromRGB(200, 200, 200),
-                    Font = Enum.Font.GothamMedium,
-                    TextSize = 11,
-                    Parent = DropdownList
-                }, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
+            local function rebuildOptions()
+                -- Clear existing buttons
+                for _, btn in pairs(optionButtons) do
+                    btn:Destroy()
+                end
+                optionButtons = {}
                 
-                OptionBtn.MouseButton1Click:Connect(function()
-                    selected = option
-                    SelectedLabel.Text = selected
-                    callback(selected)
-                    -- Close dropdown
-                    isOpen = false
-                    DropdownList.Visible = false
-                    Arrow.Text = "▼"
-                    DropdownFrame.Size = UDim2.new(0.96, 0, 0, 45)
-                    TweenService:Create(DropdownList, TweenInfo.new(0.2), {Size = UDim2.new(0.96, 0, 0, 0)}):Play()
-                end)
-                
-                OptionBtn.MouseEnter:Connect(function()
-                    TweenService:Create(OptionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
-                end)
-                
-                OptionBtn.MouseLeave:Connect(function()
-                    TweenService:Create(OptionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
-                end)
-                
-                table.insert(optionButtons, OptionBtn)
+                -- Create new buttons
+                for i, option in ipairs(options) do
+                    local OptionBtn = Create("TextButton", {
+                        Size = UDim2.new(0.95, 0, 0, 30),
+                        BackgroundColor3 = Color3.fromRGB(35, 35, 35),
+                        Text = option,
+                        TextColor3 = Color3.fromRGB(200, 200, 200),
+                        Font = Enum.Font.GothamMedium,
+                        TextSize = 11,
+                        ZIndex = 11,
+                        Parent = DropdownList
+                    }, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
+                    
+                    OptionBtn.MouseButton1Click:Connect(function()
+                        selected = option
+                        SelectedLabel.Text = selected
+                        callback(selected)
+                        -- Close dropdown
+                        isOpen = false
+                        Arrow.Text = "▼"
+                        TweenService:Create(DropdownList, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+                        TweenService:Create(DropdownFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0.96, 0, 0, 45)}):Play()
+                        task.delay(0.2, function()
+                            if not isOpen then
+                                DropdownList.Visible = false
+                            end
+                        end)
+                    end)
+                    
+                    OptionBtn.MouseEnter:Connect(function()
+                        TweenService:Create(OptionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
+                    end)
+                    
+                    OptionBtn.MouseLeave:Connect(function()
+                        TweenService:Create(OptionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
+                    end)
+                    
+                    table.insert(optionButtons, OptionBtn)
+                end
             end
             
-            -- Toggle Dropdown
-            DropdownFrame.MouseButton1Click:Connect(function()
+            rebuildOptions()
+            
+            -- Toggle Dropdown when clicking anywhere on the dropdown frame
+            ClickArea.MouseButton1Click:Connect(function()
                 isOpen = not isOpen
                 if isOpen then
-                    local listHeight = math.clamp(#options * 32 + 8, 0, 200)
+                    local listHeight = math.clamp(#options * 34 + 8, 0, 200)
                     DropdownList.Visible = true
                     Arrow.Text = "▲"
-                    DropdownFrame.Size = UDim2.new(0.96, 0, 0, 45)
-                    TweenService:Create(DropdownList, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0.96, 0, 0, listHeight)}):Play()
-                    TweenService:Create(DropdownFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0.96, 0, 0, 45 + listHeight + 5)}):Play()
+                    TweenService:Create(DropdownList, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, listHeight)}):Play()
+                    TweenService:Create(DropdownFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0.96, 0, 0, 45 + listHeight)}):Play()
                 else
                     Arrow.Text = "▼"
-                    TweenService:Create(DropdownList, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0.96, 0, 0, 0)}):Play()
+                    TweenService:Create(DropdownList, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(1, 0, 0, 0)}):Play()
                     TweenService:Create(DropdownFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0.96, 0, 0, 45)}):Play()
                     task.delay(0.2, function()
                         if not isOpen then
@@ -537,13 +575,15 @@ function Library:CreateWindow(config)
                 end
             end)
             
-            -- Return methods
             return {
                 SetValue = function(newValue)
-                    if table.find(options, newValue) then
-                        selected = newValue
-                        SelectedLabel.Text = selected
-                        callback(selected)
+                    for _, option in ipairs(options) do
+                        if option == newValue then
+                            selected = newValue
+                            SelectedLabel.Text = selected
+                            callback(selected)
+                            break
+                        end
                     end
                 end,
                 GetValue = function()
@@ -551,43 +591,11 @@ function Library:CreateWindow(config)
                 end,
                 AddOption = function(newOption)
                     table.insert(options, newOption)
-                    -- Rebuild dropdown list
-                    for _, btn in pairs(optionButtons) do
-                        btn:Destroy()
-                    end
-                    optionButtons = {}
-                    for i, option in ipairs(options) do
-                        local OptionBtn = Create("TextButton", {
-                            Size = UDim2.new(0.95, 0, 0, 30),
-                            BackgroundColor3 = Color3.fromRGB(35, 35, 35),
-                            Text = option,
-                            TextColor3 = Color3.fromRGB(200, 200, 200),
-                            Font = Enum.Font.GothamMedium,
-                            TextSize = 11,
-                            Parent = DropdownList
-                        }, {Create("UICorner", {CornerRadius = UDim.new(0, 4)})})
-                        
-                        OptionBtn.MouseButton1Click:Connect(function()
-                            selected = option
-                            SelectedLabel.Text = selected
-                            callback(selected)
-                            isOpen = false
-                            DropdownList.Visible = false
-                            Arrow.Text = "▼"
-                            DropdownFrame.Size = UDim2.new(0.96, 0, 0, 45)
-                            TweenService:Create(DropdownList, TweenInfo.new(0.2), {Size = UDim2.new(0.96, 0, 0, 0)}):Play()
-                        end)
-                        
-                        OptionBtn.MouseEnter:Connect(function()
-                            TweenService:Create(OptionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
-                        end)
-                        
-                        OptionBtn.MouseLeave:Connect(function()
-                            TweenService:Create(OptionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
-                        end)
-                        
-                        table.insert(optionButtons, OptionBtn)
-                    end
+                    rebuildOptions()
+                end,
+                ClearOptions = function()
+                    options = {}
+                    rebuildOptions()
                 end
             }
         end
