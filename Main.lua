@@ -1,7 +1,7 @@
 --[[ 
     PREMIUM MODERN SILVER UI (V11)
     - Style: Compact & Refined
-    - Features: Button, Toggle, Slider, Input, Dropdown, Section, Paragraph
+    - Features: Button, Toggle, Slider, Input, Dropdown, Section, Paragraph, Divider
     - Scrollable Dropdown
     - Icon System: 150+ Icons
     - 24 Beautiful Themes
@@ -57,6 +57,7 @@ Library.Icons = {
 	grid        = "📊",
 	section     = "📑",
 	paragraph   = "📝",
+	divider     = "─",
 
 	-- People
 	user        = "👤",
@@ -469,7 +470,7 @@ function Library:CreateWindow(config)
 	local Sidebar = Create("Frame", {Size = UDim2.new(0, 110, 1, -55), Position = UDim2.fromOffset(10, 55), BackgroundColor3 = Themes.Colors[currentTheme].Sidebar, Parent = MainFrame}, {
 		Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
 		Create("UIListLayout", {Padding = UDim.new(0, 6), HorizontalAlignment = "Center"}),
-		Create("UIPadding", {PaddingTop = UDim.new(0, 8)})
+		Create("UIPadding", {PaddingTop = UDim.new(0, 8), PaddingBottom = UDim.new(0, 8)})
 	})
 	ApplyPremiumBorder(Sidebar, 1.2, Themes.Colors[currentTheme].Accent)
 
@@ -479,6 +480,17 @@ function Library:CreateWindow(config)
 	local firstTab = true
 	local tabs = {}
 	local currentPage = nil
+	
+	-- Function to create divider in sidebar
+	local function CreateSidebarDivider()
+		local DividerFrame = Create("Frame", {
+			Size = UDim2.new(0.85, 0, 0, 2),
+			BackgroundColor3 = Themes.Colors[currentTheme].Accent,
+			BackgroundTransparency = 0.5,
+			Parent = Sidebar
+		})
+		return DividerFrame
+	end
 	
 	local function ApplyTheme(themeName)
 		local theme = Themes.Colors[themeName]
@@ -513,6 +525,13 @@ function Library:CreateWindow(config)
 		Sidebar.BackgroundColor3 = theme.Sidebar
 		OpenButton.BackgroundColor3 = theme.Secondary
 		
+		-- Update sidebar dividers
+		for _, child in ipairs(Sidebar:GetChildren()) do
+			if child:IsA("Frame") and child.Size == UDim2.new(0.85, 0, 0, 2) then
+				child.BackgroundColor3 = theme.Accent
+			end
+		end
+		
 		for _, tabBtn in ipairs(tabs) do
 			tabBtn.BackgroundColor3 = theme.Button
 			tabBtn.TextColor3 = theme.TextSecondary
@@ -529,16 +548,22 @@ function Library:CreateWindow(config)
 						end
 					end
 				elseif child:IsA("Frame") then
-					child.BackgroundColor3 = theme.Secondary
-					for _, frameChild in ipairs(child:GetChildren()) do
-						if frameChild:IsA("TextLabel") then
-							frameChild.TextColor3 = frameChild.Name == "SectionTitle" and theme.Accent or theme.Text
-						elseif frameChild:IsA("TextButton") then
-							frameChild.BackgroundColor3 = theme.Button
-							frameChild.TextColor3 = theme.Text
-						elseif frameChild:IsA("TextBox") then
-							frameChild.BackgroundColor3 = theme.Button
-							frameChild.TextColor3 = theme.Text
+					-- Check if it's a divider (height 2)
+					if child.Size == UDim2.new(0.96, 0, 0, 2) then
+						child.BackgroundColor3 = theme.Accent
+						child.BackgroundTransparency = 0.5
+					else
+						child.BackgroundColor3 = theme.Secondary
+						for _, frameChild in ipairs(child:GetChildren()) do
+							if frameChild:IsA("TextLabel") then
+								frameChild.TextColor3 = frameChild.Name == "SectionTitle" and theme.Accent or theme.Text
+							elseif frameChild:IsA("TextButton") then
+								frameChild.BackgroundColor3 = theme.Button
+								frameChild.TextColor3 = theme.Text
+							elseif frameChild:IsA("TextBox") then
+								frameChild.BackgroundColor3 = theme.Button
+								frameChild.TextColor3 = theme.Text
+							end
 						end
 					end
 				end
@@ -577,6 +602,19 @@ function Library:CreateWindow(config)
 		firstTab = false
 		
 		local Tab = {}
+		
+		-- Divider in Tab (inside)
+		function Tab:Divider()
+			local DividerFrame = Create("Frame", {
+				Size = UDim2.new(0.96, 0, 0, 2),
+				BackgroundColor3 = Themes.Colors[currentTheme].Accent,
+				BackgroundTransparency = 0.5,
+				Parent = Page
+			}, {
+				Create("UICorner", {CornerRadius = UDim.new(0, 1)})
+			})
+			return DividerFrame
+		end
 		
 		-- Section
 		function Tab:Section(config)
@@ -1023,6 +1061,11 @@ function Library:CreateWindow(config)
 		end
 
 		return Tab
+	end
+	
+	-- Divider in Window (next to Tabs / in Sidebar)
+	function Window:Divider()
+		return CreateSidebarDivider()
 	end
 
 	return Window
