@@ -1,11 +1,11 @@
 --[[ 
     PREMIUM MODERN SILVER UI (V11)
     - Style: Compact & Refined
-    - Features: Button, Toggle, Slider, Input, Dropdown, Theme Changer
+    - Features: Button, Toggle, Slider, Input, Dropdown, Section, Paragraph
+    - Scrollable Dropdown
     - Icon System: 150+ Icons
-    - Draggable Open/Close Button
-    - Author below Title
     - 24 Beautiful Themes
+    - Draggable Open/Close Button
 ]]
 
 local UIS = game:GetService("UserInputService")
@@ -55,6 +55,8 @@ Library.Icons = {
 	ban         = "🚫",
 	sliders     = "🎚️",
 	grid        = "📊",
+	section     = "📑",
+	paragraph   = "📝",
 
 	-- People
 	user        = "👤",
@@ -173,90 +175,20 @@ Library.Icons = {
 	aimbot      = "⊕",
 	tp          = "⊛",
 	
-	-- Additional Icons
+	-- Additional
 	rocket      = "🚀",
 	star2       = "🌟",
 	flash       = "⚡",
 	power       = "🔋",
 	battery     = "🔋",
 	headphones  = "🎧",
-	camera      = "📸",
-	printer     = "🖨️",
-	phone       = "📱",
-	tablet      = "📱",
-	laptop      = "💻",
-	cloud       = "☁️",
-	rainbow     = "🌈",
-	ghost       = "👻",
-	dragon      = "🐉",
-	unicorn     = "🦄",
-	panda       = "🐼",
-	fox         = "🦊",
-	cat         = "🐱",
-	dog         = "🐶",
-	bird        = "🐦",
-	fish        = "🐟",
-	flower      = "🌸",
-	tree        = "🌲",
-	mountain    = "⛰️",
-	wave        = "🌊",
-	wind        = "💨",
-	thunder     = "⛈️",
-	snow        = "❄️",
-	umbrella    = "☂️",
-	coffee      = "☕",
-	burger      = "🍔",
-	pizza       = "🍕",
-	apple       = "🍎",
-	car         = "🚗",
-	bus         = "🚌",
-	train       = "🚂",
-	airplane    = "✈️",
-	boat        = "⛵",
-	bicycle     = "🚲",
-	run         = "🏃",
-	swim        = "🏊",
-	party       = "🎉",
-	fireworks   = "🎆",
-	balloon     = "🎈",
-	ribbon2     = "🎀",
-	gift2       = "🎁",
-	cake        = "🎂",
-	candy       = "🍬",
-	beer        = "🍺",
-	wine        = "🍷",
-	tools       = "🔧",
-	brush       = "🖌️",
-	scissors    = "✂️",
-	book        = "📖",
-	newspaper   = "📰",
-	microphone  = "🎤",
-	radio       = "📻",
-	tv          = "📺",
-	film        = "🎬",
-	ticket      = "🎫",
-	mask        = "🎭",
-	magic       = "🎩",
-	crystal     = "🔮",
-	gamepad     = "🎮",
-	dice        = "🎲",
-	cards       = "🃏",
-	chess       = "♟️",
-	basketball  = "🏀",
-	football    = "⚽",
-	baseball    = "⚾",
-	tennis      = "🎾",
-	golf        = "⛳",
-	bowling     = "🎳",
-	skate       = "🛹",
-	surf        = "🏄"
+	camera      = "📸"
 }
 
 local Themes = {}
 
 -- Theme Definitions
 Themes.Colors = {
-	-- Dark Themes
 	Dark = {
 		Background = Color3.fromRGB(8, 8, 8),
 		Secondary = Color3.fromRGB(18, 18, 18),
@@ -266,58 +198,6 @@ Themes.Colors = {
 		TextSecondary = Color3.fromRGB(180, 180, 180),
 		Button = Color3.fromRGB(18, 18, 18),
 		Border = Color3.fromRGB(255, 255, 255)
-	},
-	Midnight = {
-		Background = Color3.fromRGB(10, 10, 20),
-		Secondary = Color3.fromRGB(20, 20, 35),
-		Sidebar = Color3.fromRGB(15, 15, 25),
-		Accent = Color3.fromRGB(100, 100, 200),
-		Text = Color3.fromRGB(200, 200, 255),
-		TextSecondary = Color3.fromRGB(150, 150, 200),
-		Button = Color3.fromRGB(20, 20, 35),
-		Border = Color3.fromRGB(100, 100, 200)
-	},
-	Carbon = {
-		Background = Color3.fromRGB(15, 15, 15),
-		Secondary = Color3.fromRGB(25, 25, 25),
-		Sidebar = Color3.fromRGB(18, 18, 18),
-		Accent = Color3.fromRGB(80, 80, 80),
-		Text = Color3.fromRGB(210, 210, 210),
-		TextSecondary = Color3.fromRGB(150, 150, 150),
-		Button = Color3.fromRGB(25, 25, 25),
-		Border = Color3.fromRGB(100, 100, 100)
-	},
-	-- Light Themes
-	Light = {
-		Background = Color3.fromRGB(240, 240, 240),
-		Secondary = Color3.fromRGB(250, 250, 250),
-		Sidebar = Color3.fromRGB(235, 235, 235),
-		Accent = Color3.fromRGB(80, 80, 80),
-		Text = Color3.fromRGB(30, 30, 30),
-		TextSecondary = Color3.fromRGB(80, 80, 80),
-		Button = Color3.fromRGB(245, 245, 245),
-		Border = Color3.fromRGB(100, 100, 100)
-	},
-	Cream = {
-		Background = Color3.fromRGB(245, 240, 230),
-		Secondary = Color3.fromRGB(255, 250, 240),
-		Sidebar = Color3.fromRGB(250, 245, 235),
-		Accent = Color3.fromRGB(180, 140, 100),
-		Text = Color3.fromRGB(60, 50, 40),
-		TextSecondary = Color3.fromRGB(120, 100, 80),
-		Button = Color3.fromRGB(255, 250, 240),
-		Border = Color3.fromRGB(180, 140, 100)
-	},
-	-- Gold & Silver
-	Gold = {
-		Background = Color3.fromRGB(20, 15, 8),
-		Secondary = Color3.fromRGB(35, 25, 12),
-		Sidebar = Color3.fromRGB(25, 18, 10),
-		Accent = Color3.fromRGB(255, 215, 0),
-		Text = Color3.fromRGB(255, 235, 150),
-		TextSecondary = Color3.fromRGB(200, 170, 80),
-		Button = Color3.fromRGB(35, 25, 12),
-		Border = Color3.fromRGB(255, 215, 0)
 	},
 	Silver = {
 		Background = Color3.fromRGB(25, 25, 35),
@@ -329,90 +209,16 @@ Themes.Colors = {
 		Button = Color3.fromRGB(35, 35, 45),
 		Border = Color3.fromRGB(192, 192, 192)
 	},
-	-- Nature Themes
-	Forest = {
-		Background = Color3.fromRGB(10, 25, 10),
-		Secondary = Color3.fromRGB(20, 40, 20),
-		Sidebar = Color3.fromRGB(15, 30, 15),
-		Accent = Color3.fromRGB(80, 200, 80),
-		Text = Color3.fromRGB(180, 230, 180),
-		TextSecondary = Color3.fromRGB(120, 170, 120),
-		Button = Color3.fromRGB(20, 40, 20),
-		Border = Color3.fromRGB(80, 200, 80)
+	Gold = {
+		Background = Color3.fromRGB(20, 15, 8),
+		Secondary = Color3.fromRGB(35, 25, 12),
+		Sidebar = Color3.fromRGB(25, 18, 10),
+		Accent = Color3.fromRGB(255, 215, 0),
+		Text = Color3.fromRGB(255, 235, 150),
+		TextSecondary = Color3.fromRGB(200, 170, 80),
+		Button = Color3.fromRGB(35, 25, 12),
+		Border = Color3.fromRGB(255, 215, 0)
 	},
-	Emerald = {
-		Background = Color3.fromRGB(8, 25, 20),
-		Secondary = Color3.fromRGB(15, 40, 30),
-		Sidebar = Color3.fromRGB(10, 30, 22),
-		Accent = Color3.fromRGB(80, 220, 150),
-		Text = Color3.fromRGB(170, 240, 210),
-		TextSecondary = Color3.fromRGB(110, 180, 140),
-		Button = Color3.fromRGB(15, 40, 30),
-		Border = Color3.fromRGB(80, 220, 150)
-	},
-	Ocean = {
-		Background = Color3.fromRGB(8, 20, 35),
-		Secondary = Color3.fromRGB(15, 30, 50),
-		Sidebar = Color3.fromRGB(10, 22, 40),
-		Accent = Color3.fromRGB(80, 180, 255),
-		Text = Color3.fromRGB(180, 220, 255),
-		TextSecondary = Color3.fromRGB(120, 160, 210),
-		Button = Color3.fromRGB(15, 30, 50),
-		Border = Color3.fromRGB(80, 180, 255)
-	},
-	-- Pink/Red Themes
-	Rose = {
-		Background = Color3.fromRGB(30, 15, 20),
-		Secondary = Color3.fromRGB(45, 25, 35),
-		Sidebar = Color3.fromRGB(35, 18, 25),
-		Accent = Color3.fromRGB(255, 100, 150),
-		Text = Color3.fromRGB(255, 200, 210),
-		TextSecondary = Color3.fromRGB(200, 130, 150),
-		Button = Color3.fromRGB(45, 25, 35),
-		Border = Color3.fromRGB(255, 100, 150)
-	},
-	Crimson = {
-		Background = Color3.fromRGB(30, 8, 8),
-		Secondary = Color3.fromRGB(50, 15, 15),
-		Sidebar = Color3.fromRGB(40, 10, 10),
-		Accent = Color3.fromRGB(220, 60, 60),
-		Text = Color3.fromRGB(255, 180, 180),
-		TextSecondary = Color3.fromRGB(200, 120, 120),
-		Button = Color3.fromRGB(50, 15, 15),
-		Border = Color3.fromRGB(220, 60, 60)
-	},
-	-- Purple Themes
-	Purple = {
-		Background = Color3.fromRGB(20, 10, 30),
-		Secondary = Color3.fromRGB(35, 20, 45),
-		Sidebar = Color3.fromRGB(25, 12, 35),
-		Accent = Color3.fromRGB(160, 100, 220),
-		Text = Color3.fromRGB(210, 180, 240),
-		TextSecondary = Color3.fromRGB(150, 120, 190),
-		Button = Color3.fromRGB(35, 20, 45),
-		Border = Color3.fromRGB(160, 100, 220)
-	},
-	Violet = {
-		Background = Color3.fromRGB(20, 8, 35),
-		Secondary = Color3.fromRGB(35, 15, 55),
-		Sidebar = Color3.fromRGB(25, 10, 40),
-		Accent = Color3.fromRGB(180, 80, 240),
-		Text = Color3.fromRGB(220, 170, 255),
-		TextSecondary = Color3.fromRGB(160, 110, 210),
-		Button = Color3.fromRGB(35, 15, 55),
-		Border = Color3.fromRGB(180, 80, 240)
-	},
-	Lavender = {
-		Background = Color3.fromRGB(25, 15, 40),
-		Secondary = Color3.fromRGB(40, 25, 60),
-		Sidebar = Color3.fromRGB(30, 18, 45),
-		Accent = Color3.fromRGB(200, 150, 255),
-		Text = Color3.fromRGB(230, 200, 255),
-		TextSecondary = Color3.fromRGB(170, 130, 210),
-		Button = Color3.fromRGB(40, 25, 60),
-		Border = Color3.fromRGB(200, 150, 255)
-	},
-	-- Blue Themes
 	Blue = {
 		Background = Color3.fromRGB(8, 15, 30),
 		Secondary = Color3.fromRGB(15, 25, 45),
@@ -423,17 +229,36 @@ Themes.Colors = {
 		Button = Color3.fromRGB(15, 25, 45),
 		Border = Color3.fromRGB(80, 150, 255)
 	},
-	Sky = {
-		Background = Color3.fromRGB(10, 20, 40),
-		Secondary = Color3.fromRGB(20, 35, 60),
-		Sidebar = Color3.fromRGB(12, 25, 48),
-		Accent = Color3.fromRGB(100, 200, 255),
-		Text = Color3.fromRGB(200, 230, 255),
-		TextSecondary = Color3.fromRGB(140, 170, 210),
-		Button = Color3.fromRGB(20, 35, 60),
-		Border = Color3.fromRGB(100, 200, 255)
+	Forest = {
+		Background = Color3.fromRGB(10, 25, 10),
+		Secondary = Color3.fromRGB(20, 40, 20),
+		Sidebar = Color3.fromRGB(15, 30, 15),
+		Accent = Color3.fromRGB(80, 200, 80),
+		Text = Color3.fromRGB(180, 230, 180),
+		TextSecondary = Color3.fromRGB(120, 170, 120),
+		Button = Color3.fromRGB(20, 40, 20),
+		Border = Color3.fromRGB(80, 200, 80)
 	},
-	-- Orange/Yellow Themes
+	Rose = {
+		Background = Color3.fromRGB(30, 15, 20),
+		Secondary = Color3.fromRGB(45, 25, 35),
+		Sidebar = Color3.fromRGB(35, 18, 25),
+		Accent = Color3.fromRGB(255, 100, 150),
+		Text = Color3.fromRGB(255, 200, 210),
+		TextSecondary = Color3.fromRGB(200, 130, 150),
+		Button = Color3.fromRGB(45, 25, 35),
+		Border = Color3.fromRGB(255, 100, 150)
+	},
+	Purple = {
+		Background = Color3.fromRGB(20, 10, 30),
+		Secondary = Color3.fromRGB(35, 20, 45),
+		Sidebar = Color3.fromRGB(25, 12, 35),
+		Accent = Color3.fromRGB(160, 100, 220),
+		Text = Color3.fromRGB(210, 180, 240),
+		TextSecondary = Color3.fromRGB(150, 120, 190),
+		Button = Color3.fromRGB(35, 20, 45),
+		Border = Color3.fromRGB(160, 100, 220)
+	},
 	Orange = {
 		Background = Color3.fromRGB(30, 18, 8),
 		Secondary = Color3.fromRGB(50, 30, 12),
@@ -444,17 +269,6 @@ Themes.Colors = {
 		Button = Color3.fromRGB(50, 30, 12),
 		Border = Color3.fromRGB(255, 140, 50)
 	},
-	Amber = {
-		Background = Color3.fromRGB(30, 20, 8),
-		Secondary = Color3.fromRGB(50, 35, 12),
-		Sidebar = Color3.fromRGB(38, 25, 10),
-		Accent = Color3.fromRGB(255, 180, 60),
-		Text = Color3.fromRGB(255, 220, 140),
-		TextSecondary = Color3.fromRGB(210, 170, 80),
-		Button = Color3.fromRGB(50, 35, 12),
-		Border = Color3.fromRGB(255, 180, 60)
-	},
-	-- Pink Themes
 	Pink = {
 		Background = Color3.fromRGB(35, 12, 25),
 		Secondary = Color3.fromRGB(55, 20, 40),
@@ -465,17 +279,6 @@ Themes.Colors = {
 		Button = Color3.fromRGB(55, 20, 40),
 		Border = Color3.fromRGB(255, 100, 200)
 	},
-	Bubblegum = {
-		Background = Color3.fromRGB(45, 20, 40),
-		Secondary = Color3.fromRGB(70, 30, 60),
-		Sidebar = Color3.fromRGB(55, 22, 48),
-		Accent = Color3.fromRGB(255, 120, 220),
-		Text = Color3.fromRGB(255, 200, 240),
-		TextSecondary = Color3.fromRGB(210, 140, 190),
-		Button = Color3.fromRGB(70, 30, 60),
-		Border = Color3.fromRGB(255, 120, 220)
-	},
-	-- Unique Themes
 	Cyber = {
 		Background = Color3.fromRGB(8, 8, 20),
 		Secondary = Color3.fromRGB(15, 15, 35),
@@ -485,66 +288,11 @@ Themes.Colors = {
 		TextSecondary = Color3.fromRGB(0, 180, 150),
 		Button = Color3.fromRGB(15, 15, 35),
 		Border = Color3.fromRGB(0, 255, 255)
-	},
-	Sunset = {
-		Background = Color3.fromRGB(35, 15, 25),
-		Secondary = Color3.fromRGB(55, 25, 40),
-		Sidebar = Color3.fromRGB(42, 18, 30),
-		Accent = Color3.fromRGB(255, 100, 80),
-		Text = Color3.fromRGB(255, 180, 160),
-		TextSecondary = Color3.fromRGB(210, 130, 110),
-		Button = Color3.fromRGB(55, 25, 40),
-		Border = Color3.fromRGB(255, 100, 80)
-	},
-	Mint = {
-		Background = Color3.fromRGB(15, 30, 25),
-		Secondary = Color3.fromRGB(25, 50, 40),
-		Sidebar = Color3.fromRGB(18, 38, 30),
-		Accent = Color3.fromRGB(100, 220, 180),
-		Text = Color3.fromRGB(180, 240, 220),
-		TextSecondary = Color3.fromRGB(120, 190, 160),
-		Button = Color3.fromRGB(25, 50, 40),
-		Border = Color3.fromRGB(100, 220, 180)
-	},
-	Coffee = {
-		Background = Color3.fromRGB(25, 18, 12),
-		Secondary = Color3.fromRGB(40, 28, 18),
-		Sidebar = Color3.fromRGB(30, 22, 14),
-		Accent = Color3.fromRGB(180, 120, 80),
-		Text = Color3.fromRGB(220, 180, 140),
-		TextSecondary = Color3.fromRGB(160, 120, 90),
-		Button = Color3.fromRGB(40, 28, 18),
-		Border = Color3.fromRGB(180, 120, 80)
-	},
-	-- New Themes
-	Galaxy = {
-		Background = Color3.fromRGB(12, 8, 25),
-		Secondary = Color3.fromRGB(22, 15, 40),
-		Sidebar = Color3.fromRGB(16, 10, 30),
-		Accent = Color3.fromRGB(180, 100, 255),
-		Text = Color3.fromRGB(220, 180, 255),
-		TextSecondary = Color3.fromRGB(160, 120, 210),
-		Button = Color3.fromRGB(22, 15, 40),
-		Border = Color3.fromRGB(180, 100, 255)
-	},
-	Neon = {
-		Background = Color3.fromRGB(8, 8, 8),
-		Secondary = Color3.fromRGB(18, 18, 18),
-		Sidebar = Color3.fromRGB(12, 12, 12),
-		Accent = Color3.fromRGB(0, 255, 100),
-		Text = Color3.fromRGB(0, 255, 150),
-		TextSecondary = Color3.fromRGB(100, 255, 150),
-		Button = Color3.fromRGB(18, 18, 18),
-		Border = Color3.fromRGB(0, 255, 100)
 	}
 }
 
--- Theme list for dropdown
 Library.ThemeList = {
-	"Dark", "Midnight", "Carbon", "Light", "Cream", "Gold", "Silver",
-	"Forest", "Emerald", "Ocean", "Rose", "Crimson", "Purple", "Violet",
-	"Lavender", "Blue", "Sky", "Orange", "Amber", "Pink", "Bubblegum",
-	"Cyber", "Sunset", "Mint", "Coffee", "Galaxy", "Neon"
+	"Dark", "Silver", "Gold", "Blue", "Forest", "Rose", "Purple", "Orange", "Pink", "Cyber"
 }
 
 local function Create(class, props, children)
@@ -611,11 +359,9 @@ function Library:CreateWindow(config)
 	
 	local screenGui = Create("ScreenGui", {Name = folder, ResetOnSpawn = false, Parent = (game:GetService("CoreGui") or Player:WaitForChild("PlayerGui"))})
 
-	-- Open Button (Draggable)
 	local OpenButton = Create("ImageButton", {Size = UDim2.fromOffset(40, 40), Position = UDim2.new(0, 15, 0.5, -20), BackgroundColor3 = Themes.Colors[currentTheme].Secondary, Image = "rbxassetid://74666642456643", Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(1, 0)})})
 	ApplyPremiumBorder(OpenButton, 2, Themes.Colors[currentTheme].Accent)
 	
-	-- Make Open Button Draggable
 	do
 		local dragging, dragStart, startPos
 		OpenButton.InputBegan:Connect(function(input) 
@@ -638,10 +384,9 @@ function Library:CreateWindow(config)
 		end)
 	end
 
-	local MainFrame = Create("Frame", {Name = "MainFrame", Size = UDim2.fromOffset(420, 280), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = Themes.Colors[currentTheme].Background, Visible = true, Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
+	local MainFrame = Create("Frame", {Name = "MainFrame", Size = UDim2.fromOffset(420, 320), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = Themes.Colors[currentTheme].Background, Visible = true, Parent = screenGui}, {Create("UICorner", {CornerRadius = UDim.new(0, 10)})})
 	ApplyPremiumBorder(MainFrame, 2.8, Themes.Colors[currentTheme].Accent)
 
-	-- Make MainFrame Draggable
 	do
 		local dragging, dragStart, startPos
 		MainFrame.InputBegan:Connect(function(input) 
@@ -666,24 +411,19 @@ function Library:CreateWindow(config)
 
 	OpenButton.MouseButton1Click:Connect(function()
 		MainFrame.Visible = not MainFrame.Visible
-		if MainFrame.Visible then MainFrame:TweenSize(UDim2.fromOffset(420, 280), "Out", "Back", 0.4, true) end
+		if MainFrame.Visible then MainFrame:TweenSize(UDim2.fromOffset(420, 320), "Out", "Back", 0.4, true) end
 	end)
 
-	-- Top Bar with Title
 	local TopBar = Create("Frame", {Size = UDim2.new(1, 0, 0, 45), BackgroundTransparency = 1, Parent = MainFrame})
 	
-	-- Title with icon
 	Create("TextLabel", {Text = Library.Icons.diamond .. " " .. titleText:upper(), Font = Enum.Font.GothamBold, TextSize = 14, TextColor3 = Themes.Colors[currentTheme].Text, TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 8), Size = UDim2.new(1, -60, 0, 18), Parent = TopBar})
 	
-	-- Author (below title)
 	if author ~= "" then
 		Create("TextLabel", {Text = Library.Icons.user .. " " .. author, Font = Enum.Font.GothamMedium, TextSize = 9, TextColor3 = Themes.Colors[currentTheme].TextSecondary, TextXAlignment = "Left", BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 26), Size = UDim2.new(1, -60, 0, 14), Parent = TopBar})
 	end
 	
-	-- Close Button
 	local CloseBtn = Create("ImageButton", {Size = UDim2.fromOffset(24, 24), Position = UDim2.new(1, -34, 0, 10), BackgroundTransparency = 1, Image = "rbxassetid://74666642456643", ImageColor3 = Themes.Colors[currentTheme].TextSecondary, Parent = TopBar})
 	
-	-- Make Close Button Draggable
 	do
 		local dragging, dragStart, startPos
 		CloseBtn.InputBegan:Connect(function(input) 
@@ -726,7 +466,6 @@ function Library:CreateWindow(config)
 		end
 	end)
 
-	-- Sidebar
 	local Sidebar = Create("Frame", {Size = UDim2.new(0, 110, 1, -55), Position = UDim2.fromOffset(10, 55), BackgroundColor3 = Themes.Colors[currentTheme].Sidebar, Parent = MainFrame}, {
 		Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
 		Create("UIListLayout", {Padding = UDim.new(0, 6), HorizontalAlignment = "Center"}),
@@ -734,7 +473,6 @@ function Library:CreateWindow(config)
 	})
 	ApplyPremiumBorder(Sidebar, 1.2, Themes.Colors[currentTheme].Accent)
 
-	-- Container
 	local Container = Create("Frame", {Size = UDim2.new(1, -140, 1, -55), Position = UDim2.fromOffset(130, 55), BackgroundTransparency = 1, Parent = MainFrame})
 
 	local Window = {}
@@ -742,12 +480,10 @@ function Library:CreateWindow(config)
 	local tabs = {}
 	local currentPage = nil
 	
-	-- Theme changer function
 	local function ApplyTheme(themeName)
 		local theme = Themes.Colors[themeName]
 		if not theme then return end
 		
-		-- Update MainFrame
 		MainFrame.BackgroundColor3 = theme.Background
 		for _, stroke in ipairs(MainFrame:GetChildren()) do
 			if stroke:IsA("UIStroke") then
@@ -763,7 +499,6 @@ function Library:CreateWindow(config)
 			end
 		end
 		
-		-- Update TopBar text
 		for _, child in ipairs(TopBar:GetChildren()) do
 			if child:IsA("TextLabel") then
 				if string.find(child.Text, titleText:upper()) then
@@ -774,32 +509,15 @@ function Library:CreateWindow(config)
 			end
 		end
 		
-		-- Update Close button color
 		CloseBtn.ImageColor3 = theme.TextSecondary
-		
-		-- Update Sidebar
 		Sidebar.BackgroundColor3 = theme.Sidebar
-		for _, stroke in ipairs(Sidebar:GetChildren()) do
-			if stroke:IsA("UIStroke") then
-				stroke.Color = theme.Accent
-			end
-		end
-		
-		-- Update Open button
 		OpenButton.BackgroundColor3 = theme.Secondary
-		for _, stroke in ipairs(OpenButton:GetChildren()) do
-			if stroke:IsA("UIStroke") then
-				stroke.Color = theme.Accent
-			end
-		end
 		
-		-- Update all tab buttons
 		for _, tabBtn in ipairs(tabs) do
 			tabBtn.BackgroundColor3 = theme.Button
 			tabBtn.TextColor3 = theme.TextSecondary
 		end
 		
-		-- Update current page elements
 		if currentPage then
 			for _, child in ipairs(currentPage:GetChildren()) do
 				if child:IsA("TextButton") then
@@ -814,18 +532,13 @@ function Library:CreateWindow(config)
 					child.BackgroundColor3 = theme.Secondary
 					for _, frameChild in ipairs(child:GetChildren()) do
 						if frameChild:IsA("TextLabel") then
-							frameChild.TextColor3 = theme.Text
+							frameChild.TextColor3 = frameChild.Name == "SectionTitle" and theme.Accent or theme.Text
 						elseif frameChild:IsA("TextButton") then
 							frameChild.BackgroundColor3 = theme.Button
 							frameChild.TextColor3 = theme.Text
 						elseif frameChild:IsA("TextBox") then
 							frameChild.BackgroundColor3 = theme.Button
 							frameChild.TextColor3 = theme.Text
-						end
-					end
-					for _, stroke in ipairs(child:GetChildren()) do
-						if stroke:IsA("UIStroke") then
-							stroke.Color = theme.Accent
 						end
 					end
 				end
@@ -864,6 +577,73 @@ function Library:CreateWindow(config)
 		firstTab = false
 		
 		local Tab = {}
+		
+		-- Section
+		function Tab:Section(config)
+			config = config or {}
+			local title = config.Title or "Section"
+			local icon = config.Icon or Library.Icons.section
+			
+			local SectionFrame = Create("Frame", {
+				Size = UDim2.new(0.96, 0, 0, 35),
+				BackgroundColor3 = Themes.Colors[currentTheme].Button,
+				BackgroundTransparency = 0.5,
+				Parent = Page
+			}, {
+				Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+			})
+			
+			Create("TextLabel", {
+				Name = "SectionTitle",
+				Text = icon .. " " .. title:upper(),
+				Font = Enum.Font.GothamBold,
+				TextSize = 11,
+				TextColor3 = Themes.Colors[currentTheme].Accent,
+				TextXAlignment = "Left",
+				BackgroundTransparency = 1,
+				Position = UDim2.fromOffset(12, 0),
+				Size = UDim2.new(1, -24, 1, 0),
+				Parent = SectionFrame
+			})
+			
+			return SectionFrame
+		end
+		
+		-- Paragraph
+		function Tab:Paragraph(config)
+			config = config or {}
+			local text = config.Text or ""
+			local icon = config.Icon or Library.Icons.paragraph
+			
+			local ParaFrame = Create("Frame", {
+				Size = UDim2.new(0.96, 0, 0, 0),
+				BackgroundColor3 = Themes.Colors[currentTheme].Button,
+				BackgroundTransparency = 0.5,
+				AutomaticSize = Enum.AutomaticSize.Y,
+				Parent = Page
+			}, {
+				Create("UICorner", {CornerRadius = UDim.new(0, 6)}),
+				Create("UIPadding", {PaddingLeft = UDim.new(0, 12), PaddingRight = UDim.new(0, 12), PaddingTop = UDim.new(0, 10), PaddingBottom = UDim.new(0, 10)})
+			})
+			
+			local ParaLabel = Create("TextLabel", {
+				Text = icon .. " " .. text,
+				Font = Enum.Font.GothamMedium,
+				TextSize = 10,
+				TextColor3 = Themes.Colors[currentTheme].TextSecondary,
+				TextXAlignment = "Left",
+				TextYAlignment = "Top",
+				TextWrapped = true,
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, 0, 0, 0),
+				AutomaticSize = Enum.AutomaticSize.Y,
+				Parent = ParaFrame
+			})
+			
+			ParaFrame.Size = UDim2.new(0.96, 0, 0, ParaLabel.TextBounds.Y + 20)
+			
+			return ParaFrame
+		end
 
 		function Tab:Button(config)
 			config = config or {}
@@ -1117,25 +897,40 @@ function Library:CreateWindow(config)
 				Parent = DropdownFrame
 			})
 			
-			local DropdownList = Create("Frame", {
+			-- Scrollable Dropdown List
+			local DropdownListContainer = Create("ScrollingFrame", {
 				Size = UDim2.new(1, 0, 0, 0),
 				Position = UDim2.new(0, 0, 1, 2),
 				BackgroundColor3 = Themes.Colors[currentTheme].Sidebar,
 				Visible = false,
 				ClipsDescendants = true,
+				ScrollBarThickness = 4,
+				ScrollBarImageColor3 = Themes.Colors[currentTheme].TextSecondary,
 				ZIndex = 10,
 				Parent = DropdownFrame
 			}, {
-				Create("UICorner", {CornerRadius = UDim.new(0, 6)}),
+				Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+			})
+			
+			local DropdownList = Create("Frame", {
+				Size = UDim2.new(1, 0, 0, 0),
+				BackgroundTransparency = 1,
+				Parent = DropdownListContainer
+			}, {
 				Create("UIListLayout", {Padding = UDim.new(0, 2), HorizontalAlignment = "Center"}),
 				Create("UIPadding", {PaddingTop = UDim.new(0, 4), PaddingBottom = UDim.new(0, 4)})
 			})
-			ApplyPremiumBorder(DropdownList, 1, Themes.Colors[currentTheme].Accent)
+			
+			ApplyPremiumBorder(DropdownListContainer, 1, Themes.Colors[currentTheme].Accent)
 			
 			local optionButtons = {}
 			local function rebuildOptions()
 				for _, btn in pairs(optionButtons) do btn:Destroy() end
 				optionButtons = {}
+				
+				local totalHeight = #options * 34 + 8
+				DropdownList.Size = UDim2.new(1, 0, 0, totalHeight)
+				DropdownListContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 				
 				for i, option in ipairs(options) do
 					local OptionBtn = Create("TextButton", {
@@ -1155,10 +950,10 @@ function Library:CreateWindow(config)
 						callback(selected)
 						isOpen = false
 						Arrow.Text = "▼"
-						TweenService:Create(DropdownList, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+						TweenService:Create(DropdownListContainer, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)}):Play()
 						TweenService:Create(DropdownFrame, TweenInfo.new(0.2), {Size = UDim2.new(0.96, 0, 0, 45)}):Play()
 						task.delay(0.2, function()
-							if not isOpen then DropdownList.Visible = false end
+							if not isOpen then DropdownListContainer.Visible = false end
 						end)
 					end)
 					
@@ -1179,17 +974,17 @@ function Library:CreateWindow(config)
 			ClickArea.MouseButton1Click:Connect(function()
 				isOpen = not isOpen
 				if isOpen then
-					local listHeight = math.clamp(#options * 34 + 8, 0, 200)
-					DropdownList.Visible = true
+					local maxHeight = math.min(#options * 34 + 8, 150)
+					DropdownListContainer.Visible = true
 					Arrow.Text = "▲"
-					TweenService:Create(DropdownList, TweenInfo.new(0.3), {Size = UDim2.new(1, 0, 0, listHeight)}):Play()
-					TweenService:Create(DropdownFrame, TweenInfo.new(0.3), {Size = UDim2.new(0.96, 0, 0, 45 + listHeight)}):Play()
+					TweenService:Create(DropdownListContainer, TweenInfo.new(0.3), {Size = UDim2.new(1, 0, 0, maxHeight)}):Play()
+					TweenService:Create(DropdownFrame, TweenInfo.new(0.3), {Size = UDim2.new(0.96, 0, 0, 45 + maxHeight)}):Play()
 				else
 					Arrow.Text = "▼"
-					TweenService:Create(DropdownList, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+					TweenService:Create(DropdownListContainer, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)}):Play()
 					TweenService:Create(DropdownFrame, TweenInfo.new(0.2), {Size = UDim2.new(0.96, 0, 0, 45)}):Play()
 					task.delay(0.2, function()
-						if not isOpen then DropdownList.Visible = false end
+						if not isOpen then DropdownListContainer.Visible = false end
 					end)
 				end
 			end)
